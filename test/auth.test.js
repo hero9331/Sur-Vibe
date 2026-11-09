@@ -1,0 +1,82 @@
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
+const { MongoMemoryServer } = require('mongodb-memory-server-core');
+const { connectDb, disconnectDb } = require('../src/db');
+const { createApp } = require('../src/app');
+
+let mongo;
+let server;
+let baseUrl;
+
+before(async () => {
+  mongo = await MongoMemoryServer.create();
+  await connectDb(mongo.getUri());
+  server = createApp().listen(0);
+  baseUrl = `http://localhost:${server.address().port}`;
+});
+
+after(async () => {
+  server.close();
+  await disconnectDb();
+  await mongo.stop();
+});
+
+function call(method, path, { body, token } = {}) {
+  const headers = {};
+  if (body) headers['Content-Type'] = 'application/json';
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return fetch(baseUrl + path, { method, headers, body: body && JSON.stringify(body) });
+}
+
+test('가입하면 201과 토큰을 받는다', async () => {
+  const res = await call('POST', '/api/auth/signup', { body: { username: 'tester1', password: 'password123' } });
+  assert.equal(res.status, 201);
+  const data = await res.json();
+  assert.ok(data.token);
+  assert.equal(data.username, 'tester1');
+});
+
+test('같은 아이디로 다시 가입하면 409', async () => {
+  const res = await call('POST', '/api/auth/signup', { body: { username: 'tester1', password: 'password123' } });
+  assert.equal(res.status, 409);
+});
+
+test('형식이 틀린 아이디·짧은 비밀번호는 400', async () => {
+  assert.equal((await call('POST', '/api/auth/signup', { body: { username: 'A!', password: 'password123' } })).status, 400);
+  assert.equal((await call('POST', '/api/auth/signup', { body: { username: 'tester2', password: 'short' } })).status, 400);
+});
+
+test('비밀번호가 틀리면 401, 맞으면 토큰으로 /me를 볼 수 있다', async () => {
+  assert.equal((await call('POST', '/api/auth/login', { body: { username: 'tester1', password: 'wrongpass1' } })).status, 401);
+
+  const login = await call('POST', '/api/auth/login', { body: { username: 'tester1', password: 'password123' } });
+  assert.equal(login.status, 200);
+  const { token } = await login.json();
+
+  const me = await call('GET', '/api/auth/me', { token });
+  assert.equal(me.status, 200);
+  assert.deepEqual(await me.json(), { username: 'tester1' });
+});
+
+test('로그인 없이 보호된 API를 부르면 401', async () => {
+  assert.equal((await call('GET', '/api/accounts')).status, 401);
+  assert.equal((await call('GET', '/api/transactions', { token: 'fake.token.value' })).status, 401);
+});
+
+test('카테고리 목록과 없는 주소', async () => {
+  const res = await call('GET', '/api/categories');
+  assert.equal(res.status, 200);
+  const categories = await res.json();
+  assert.ok(categories.some((c) => c.name === '카페'));
+
+  assert.equal((await call('GET', '/api/nothing-here')).status, 404);
+});
+
+test('JSON 형식이 깨지면 400', async () => {
+  const res = await fetch(`${baseUrl}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: '{broken',
+  });
+  assert.equal(res.status, 400);
+});

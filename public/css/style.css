@@ -1,0 +1,136 @@
+/* 디자인 토큰 (6강). 색이나 간격을 바꿀 때는 여기만 고쳐요. */
+:root {
+  --color-primary: #2f6fed;
+  --color-bg: #f7f8fa;
+  --color-card: #ffffff;
+  --color-text: #1f2328;
+  --color-muted: #6b7280;
+  --color-warning: #f5a524;
+  --color-danger: #e5484d;
+  --radius: 12px;
+  --space: 16px;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "맑은 고딕", sans-serif;
+}
+
+.nav-container {
+  max-width: 960px;
+}
+
+.brand-title {
+  color: var(--color-primary);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--color-primary) !important;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--space);
+}
+
+.card {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.todo-box {
+  border: 2px dashed #d0d7de;
+  border-radius: var(--radius);
+  padding: var(--space);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.login-wrap {
+  max-width: 400px;
+  margin: 10vh auto 0;
+  padding: var(--space);
+}
+
+/* 캡처 올리기 */
+.drop-zone {
+  border: 2px dashed #c9d3e0;
+  border-radius: var(--radius);
+  background: #fbfcfe;
+  cursor: pointer;
+}
+
+.drop-zone:hover {
+  border-color: var(--color-primary);
+}
+
+.preview-img {
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  width: 100%;
+}
+
+.split-input {
+  max-width: 64px;
+}
+
+.category-select {
+  max-width: 160px;
+}
+
+/* 월별 가로 막대 그래프 */
+.bar-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.bar-label {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.bar-track {
+  height: 12px;
+  background: #eef1f5;
+  border-radius: 4px;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+.bar-value {
+  min-width: 96px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.diff-up {
+  color: var(--color-danger);
+  font-weight: 400;
+}
+
+.diff-down {
+  color: var(--color-primary);
+  font-weight: 400;
+}
+
+.recommend-card {
+  border: 1px solid #e5e9f0;
+  box-shadow: none;
+}

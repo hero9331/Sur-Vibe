@@ -1,0 +1,17 @@
+[
+  { "name": "학식", "isExpense": true, "examples": ["학생식당"] },
+  { "name": "외식", "isExpense": true, "examples": ["식당"] },
+  { "name": "배달", "isExpense": true, "examples": ["배달의민족", "쿠팡이츠"] },
+  { "name": "카페", "isExpense": true, "examples": ["스타벅스", "메가커피"] },
+  { "name": "편의점", "isExpense": true, "examples": ["GS25", "CU"] },
+  { "name": "술·모임", "isExpense": true, "examples": ["주점", "동아리 회식"] },
+  { "name": "교통", "isExpense": true, "examples": ["지하철", "버스", "택시"] },
+  { "name": "학업", "isExpense": true, "examples": ["교재", "프린트", "스터디카페"] },
+  { "name": "쇼핑", "isExpense": true, "examples": ["쿠팡", "무신사"] },
+  { "name": "구독", "isExpense": true, "examples": ["넷플릭스", "유튜브 프리미엄"] },
+  { "name": "문화·여가", "isExpense": true, "examples": ["영화", "노래방", "PC방"] },
+  { "name": "생활", "isExpense": true, "examples": ["통신비", "월세", "생필품"] },
+  { "name": "기타", "isExpense": true, "examples": [] },
+  { "name": "이체", "isExpense": false, "examples": ["내 계좌끼리 보낸 돈"] },
+  { "name": "입금", "isExpense": false, "examples": ["받은 돈"] }
+]
