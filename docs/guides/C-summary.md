@@ -17,6 +17,7 @@
 - 오늘 쓸 수 있는 돈 = (월 예산 − 고정비 합계 − 어제까지 쓴 돈) ÷ 오늘 포함 남은 날짜
 - 오늘 쓴 돈이 그 금액의 80% 이상이면 `"warning"`(노랑), 100% 이상이면 `"over"`(빨강)
 - 지출(`isExpense: true`)만 더해요. 이체·입금은 빼요.
+- 고정비로 등록한 결제(예: 넷플릭스)는 "쓴 돈"에서 빼요. 안 그러면 고정비가 두 번 빠져요. `src/services/fixedCosts.js`의 `isFixedCost(가게이름, 고정비목록)`을 쓰면 돼요.
 
 자세한 응답 모양은 `docs/API.md`의 **F4·F5 요약**을 그대로 따라요.
 
@@ -28,6 +29,7 @@
 [Task] src/routes/summary.js에 docs/API.md의 "F4·F5 요약" API 2개를 만들어 줘.
        notImplemented는 지우고, 항상 user: req.userId 조건으로 계산해 줘.
        날짜 계산은 한국 시간(Asia/Seoul) 기준으로 해 줘.
+       오늘 예산의 쓴 돈에서는 src/services/fixedCosts.js의 isFixedCost()로 고정비 결제를 빼 줘.
        계산 부분은 따로 함수로 빼서 테스트하기 쉽게 해 줘.
 [Format] 코드를 고친 뒤 무엇을 바꿨는지 3줄로 알려 줘.
 ```

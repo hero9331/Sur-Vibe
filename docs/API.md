@@ -179,6 +179,7 @@
 - `dailyAllowance` = (월 예산 − 고정비 합계 − 어제까지 쓴 돈) ÷ 오늘 포함 남은 날짜, 원 단위 버림, 0보다 작으면 0
 - `level`: 오늘 쓴 돈이 `dailyAllowance`의 80% 미만 `"ok"`, 80% 이상 `"warning"`, 100% 이상 `"over"`. 예산을 아직 안 정해서 둘 다 0이면 `"ok"`
 - 지출(`isExpense: true`)만 더해요
+- 고정비로 등록한 결제는 `spentBeforeToday`, `spentToday`에서 빼요. 예산에서 이미 뺐으니 두 번 계산하지 않아요. `src/services/fixedCosts.js`의 `isFixedCost()`를 쓰면 돼요. 월별 합계에는 그대로 넣어요
 
 ### GET /api/summary/monthly?month=2026-11
 ```json

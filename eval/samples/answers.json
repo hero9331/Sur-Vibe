@@ -81,6 +81,12 @@
           "category": "이체"
         },
         {
+          "date": "2026-11-06",
+          "merchant": "박지훈",
+          "amount": 15000,
+          "category": "기타"
+        },
+        {
           "date": "2026-11-05",
           "merchant": "한양대학교 장학금",
           "amount": 1200000,
