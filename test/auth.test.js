@@ -72,6 +72,30 @@ test('카테고리 목록과 없는 주소', async () => {
   assert.equal((await call('GET', '/api/nothing-here')).status, 404);
 });
 
+test('로그인을 너무 많이 시도하면 429와 JSON 오류를 준다', async () => {
+  let res;
+  for (let i = 0; i < 25; i += 1) {
+    res = await call('POST', '/api/auth/login', { body: { username: 'nobody1', password: 'password123' } });
+  }
+  assert.equal(res.status, 429);
+  assert.match((await res.json()).error, /너무 많아요/);
+});
+
+test('다른 아이디 로그인은 막히지 않고, 캡처 읽기 제한은 사람마다 따로다', async () => {
+  const res = await call('POST', '/api/auth/login', { body: { username: 'tester1', password: 'password123' } });
+  assert.equal(res.status, 200, '같은 와이파이의 다른 사람은 로그인할 수 있어야 해요');
+  const { token: first } = await res.json();
+
+  let scan;
+  for (let i = 0; i < 31; i += 1) scan = await call('POST', '/api/scans', { token: first });
+  assert.equal(scan.status, 429);
+  assert.match((await scan.json()).error, /30번/);
+
+  const signup = await call('POST', '/api/auth/signup', { body: { username: 'tester3', password: 'password123' } });
+  const { token: second } = await signup.json();
+  assert.notEqual((await call('POST', '/api/scans', { token: second })).status, 429);
+});
+
 test('JSON 형식이 깨지면 400', async () => {
   const res = await fetch(`${baseUrl}/api/auth/login`, {
     method: 'POST',

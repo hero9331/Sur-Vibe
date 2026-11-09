@@ -8,8 +8,18 @@ const { HttpError } = require('../utils/httpError');
 
 const router = express.Router();
 
-// 비밀번호를 짧은 시간에 여러 번 시도하는 공격을 막아요. (9강 Rate Limiting)
-const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 20, standardHeaders: 'draft-8', legacyHeaders: false });
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
+const TOO_MANY = { error: '시도가 너무 많아요. 15분 뒤에 다시 해 주세요' };
+
+function limiter(options) {
+  return rateLimit({ windowMs: FIFTEEN_MINUTES, standardHeaders: 'draft-8', legacyHeaders: false, message: TOO_MANY, ...options });
+}
+
+// 비밀번호를 여러 번 시도하는 공격은 아이디마다 막아요. (9강 Rate Limiting)
+// 강의실처럼 와이파이 하나를 같이 쓰면 IP가 같아서, IP 제한은 넉넉하게 둬요.
+const loginAttemptLimiter = limiter({ limit: 10, keyGenerator: (req) => readCredentials(req.body).username });
+const loginIpLimiter = limiter({ limit: 200 });
+const signupLimiter = limiter({ limit: 60 });
 
 const USERNAME_RULE = /^[a-z0-9_]{4,20}$/;
 
@@ -19,7 +29,7 @@ function readCredentials(body) {
   return { username, password };
 }
 
-router.post('/signup', loginLimiter, async (req, res) => {
+router.post('/signup', signupLimiter, async (req, res) => {
   const { username, password } = readCredentials(req.body);
   if (!USERNAME_RULE.test(username)) {
     throw new HttpError(400, '아이디는 영어 소문자, 숫자, _로 4~20자예요');
@@ -34,7 +44,7 @@ router.post('/signup', loginLimiter, async (req, res) => {
   res.status(201).json({ token: signToken(user), username: user.username });
 });
 
-router.post('/login', loginLimiter, async (req, res) => {
+router.post('/login', loginIpLimiter, loginAttemptLimiter, async (req, res) => {
   const { username, password } = readCredentials(req.body);
   const user = await User.findOne({ username });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
