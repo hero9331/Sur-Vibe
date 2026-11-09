@@ -44,6 +44,7 @@ function renderPicker(errorMessage) {
       cardTitle('1. 캡처 고르기'),
       errorBox(errorMessage),
       input, drop,
+      el('p', { class: 'small text-muted' }, '캡처는 내용을 읽기 위해 AI 서비스(Claude)로 보내요. 사진은 저장하지 않고, 확인 후 저장을 누른 내역만 남아요.'),
       previews.length ? el('div', { class: 'row row-cols-3 row-cols-md-5 g-2 mb-3' }, previews) : '',
       readBtn));
 }
