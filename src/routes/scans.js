@@ -26,11 +26,11 @@ const UPLOAD_ERRORS = {
 
 function receiveImages(req, res, next) {
   upload(req, res, (error) => {
-    if (error instanceof multer.MulterError) {
+    if (error) {
       next(new HttpError(400, UPLOAD_ERRORS[error.code] || '파일을 올리지 못했어요'));
       return;
     }
-    next(error);
+    next();
   });
 }
 

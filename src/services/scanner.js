@@ -146,7 +146,8 @@ async function readCaptures(images) {
   if (response.stop_reason === 'refusal') throw new HttpError(422, '이 캡처는 읽을 수 없어요. 다른 캡처로 해 주세요');
   if (response.stop_reason === 'max_tokens') throw new HttpError(422, '거래가 너무 많아요. 캡처 수를 줄여 주세요');
 
-  const text = response.content.find((block) => block.type === 'text')?.text;
+  // 다른 모델이 이어서 답하면 앞에 끊긴 글이 남을 수 있어서 마지막 글을 읽어요.
+  const text = response.content.filter((block) => block.type === 'text').at(-1)?.text;
   let parsed;
   try {
     parsed = JSON.parse(text);
