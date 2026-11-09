@@ -19,12 +19,11 @@ function renderPicker() {
     el('div', { class: 'col' }, el('img', { src: URL.createObjectURL(file), alt: file.name, class: 'img-fluid rounded border preview-img' })));
 
   const drop = el('label', { class: 'drop-zone d-block text-center p-4 mb-3', for: 'file-input' },
-    el('div', { class: 'fs-1' }, '📷'),
     el('div', { class: 'fw-semibold' }, '결제내역 캡처를 골라 주세요'),
     el('div', { class: 'small text-muted' }, `은행·카드 앱 화면 캡처 · 최대 ${MAX_FILES}장 · 이름, 카드번호는 가려 주세요`));
 
   const readBtn = el('button', { class: 'btn btn-primary w-100', type: 'button', disabled: files.length === 0, onclick: readCaptures },
-    files.length ? `AI로 읽기 (${files.length}장)` : 'AI로 읽기');
+    files.length ? `내역 정리하기 (${files.length}장)` : '내역 정리하기');
 
   section.replaceChildren(
     el('div', { class: 'card p-4' },
@@ -37,7 +36,7 @@ function renderPicker() {
 async function readCaptures(event) {
   const button = event.currentTarget;
   button.disabled = true;
-  button.replaceChildren(el('span', { class: 'spinner-border spinner-border-sm me-2' }), 'AI가 읽는 중...');
+  button.replaceChildren(el('span', { class: 'spinner-border spinner-border-sm me-2' }), '영수증 정리하는 중...');
   await new Promise((resolve) => setTimeout(resolve, 1200));
   renderReview(mockScanResult.map((item) => ({ ...item, splitCount: 1 })));
 }

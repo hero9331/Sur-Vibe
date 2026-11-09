@@ -21,7 +21,7 @@ export function el(tag, attrs = {}, ...children) {
 
 // 아직 예시 데이터라는 표시
 export function mockBadge() {
-  return el('span', { class: 'badge rounded-pill text-bg-light border fw-normal ms-2' }, '예시 데이터');
+  return el('span', { class: 'badge-stamp' }, '예시 데이터');
 }
 
 // 카드 제목 줄

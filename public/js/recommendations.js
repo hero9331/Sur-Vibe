@@ -31,7 +31,7 @@ function render() {
 
   document.getElementById('recommendations-section').replaceChildren(
     el('div', { class: 'card p-4' },
-      cardTitle('💡 이렇게 아껴 보세요', mockBadge()),
+      cardTitle('이렇게 아껴 보세요', mockBadge()),
       el('div', { class: 'row row-cols-2 g-2 mb-3' }, targetChips),
       el('div', { class: 'row row-cols-1 row-cols-md-2 g-2' }, cards)));
 }
