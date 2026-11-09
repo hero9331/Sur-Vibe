@@ -33,9 +33,8 @@
 ```
 
 API가 되면 다음을 시켜요.
-1. 홈 화면: 큰 숫자 카드 + 경고 색 (Bootstrap alert)
-2. 월별 보기: **Chart.js**로 카테고리별 도넛 그래프 + 지난달 비교 표
-   - Chart.js는 `<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>`로 넣어요 (`monthly.html`의 layout.js 위에)
+1. 홈 화면: 지금 예시 화면 모양은 유지하고, `mock.js` 대신 `/api/summary/today`로 불러오기
+2. 월별 보기: 지금 있는 가로 막대 그래프를 유지하고, `/api/summary/monthly`로 불러오기
 
 ## 확인하는 법
 1. `npm run dev`, 가입·로그인
@@ -45,8 +44,9 @@ API가 되면 다음을 시켜요.
 5. `npm run lint` 경고 0개
 
 ## 다 됐다는 기준
+- [ ] `npm test`에서 `[C]` 테스트가 건너뛰지 않고 모두 통과
 - [ ] 홈에 오늘 쓸 수 있는 돈과 경고 색이 보임
-- [ ] 월별 그래프가 보이고, 지난달보다 늘어난 건 빨간색, 줄어든 건 파란색
+- [ ] 월별 그래프가 보이고, 지난달보다 늘어난 건 빨간색, 줄어든 건 초록색
 - [ ] 거래가 하나도 없어도 오류 없이 "아직 내역이 없어요"
 - [ ] 폰 크기 화면에서도 깨지지 않음
 

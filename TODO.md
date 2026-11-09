@@ -9,7 +9,7 @@
 - [x] API 문서 `docs/API.md`, 기능별 설명서 `docs/guides/`
 - [x] GitHub 저장소 만들기 (https://github.com/hero9331/Sur-Vibe)
 - [x] 팀원 4명 저장소에 초대 (2명은 초대 수락 대기 중)
-- [ ] MongoDB Atlas 연결
+- [ ] MongoDB Atlas 연결 (순서: `docs/DEPLOY.md`)
 
 ## 2. 팀 회의 (11/13) — 전원
 - [ ] 1학년 A~D 기능 배정
