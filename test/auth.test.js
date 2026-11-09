@@ -96,6 +96,11 @@ test('다른 아이디 로그인은 막히지 않고, 캡처 읽기 제한은 �
   assert.notEqual((await call('POST', '/api/scans', { token: second })).status, 429);
 });
 
+test('개발 중에는 폰에서 http로 열어도 화면 파일이 막히지 않는다', async () => {
+  const res = await call('GET', '/api/health');
+  assert.doesNotMatch(res.headers.get('content-security-policy'), /upgrade-insecure-requests/);
+});
+
 test('JSON 형식이 깨지면 400', async () => {
   const res = await fetch(`${baseUrl}/api/auth/login`, {
     method: 'POST',

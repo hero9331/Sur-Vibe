@@ -23,6 +23,8 @@ function createApp() {
           'font-src': ["'self'", 'https://cdn.jsdelivr.net', 'data:'],
           'img-src': ["'self'", 'data:', 'blob:'],
           'connect-src': ["'self'", 'https://cdn.jsdelivr.net'],
+          // 개발 중에는 폰에서 http://내컴퓨터IP:3000 으로 열어 볼 수 있게 꺼 둬요.
+          'upgrade-insecure-requests': config.isProd ? [] : null,
         },
       },
     }),

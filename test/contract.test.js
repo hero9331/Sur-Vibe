@@ -301,6 +301,22 @@ test('[C 오늘] 하루 예산을 명세대로 계산하고, 지출만 내 것�
   assert.equal(data.level, 'ok');
 });
 
+test('[C 오늘] 고정비로 등록한 결제는 쓴 돈에서 빼서 두 번 계산하지 않는다', async (t) => {
+  const a = await newUser('summary_a6');
+  const first = await call('GET', '/api/summary/today', { token: a.token });
+  if (notBuilt(t, first)) return;
+
+  const { today } = kstToday();
+  await Setting.create({ user: a.id, monthlyBudget: 500000, fixedCosts: [{ name: '넷플릭스', amount: 13500 }] });
+  await addTransactions(a.id, [
+    { date: today, merchant: '넷플릭스코리아', amount: 13500, category: '구독' },
+    { date: today, merchant: '메가커피', amount: 2000, category: '카페' },
+  ]);
+
+  const { data } = await call('GET', '/api/summary/today', { token: a.token });
+  assert.equal(data.spentToday, 2000);
+});
+
 test('[C 오늘] 80%면 warning, 100%면 over', async (t) => {
   const a = await newUser('summary_a2');
   await Setting.create({ user: a.id, monthlyBudget: 3100000, fixedCosts: [] });
