@@ -39,7 +39,7 @@ function render() {
   const bars = s.byCategory.map((c) => {
     const fill = el('div', { class: 'bar-fill' });
     fill.style.width = `${(c.amount / max) * 100}%`;
-    return el('div', { class: 'bar-row', title: `${c.category} ${won(c.amount)} (지난달 ${won(c.prevAmount)})` },
+    return el('div', { class: 'bar-row', role: 'listitem', title: `${c.category} ${won(c.amount)} (지난달 ${won(c.prevAmount)})` },
       el('div', { class: 'bar-label' }, c.category),
       el('div', { class: 'bar-track' }, fill),
       el('div', { class: 'bar-value' }, won(c.amount), el('div', { class: 'small' }, diffText(c.diff))));

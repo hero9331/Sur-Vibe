@@ -1,9 +1,9 @@
 // F2 캡처 올리기 화면 — 담당: 박영웅
 import { api, won } from './api.js';
 import { el, cardTitle } from './ui.js';
+import { MAX_FILE_SIZE, prepareCapture, markDuplicates } from './capture.js';
 
 const MAX_FILES = 5;
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_SPLIT = 20;
 const section = document.getElementById('upload-section');
 let files = [];
@@ -20,12 +20,12 @@ function isExpense(categoryName) {
 
 function renderPicker(errorMessage) {
   const input = el('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp', multiple: true, class: 'd-none', id: 'file-input' });
-  input.addEventListener('change', () => {
-    const picked = [...input.files];
-    const small = picked.filter((file) => file.size <= MAX_FILE_SIZE);
-    files = small.slice(0, MAX_FILES);
-    if (small.length < picked.length) renderPicker('5MB가 넘는 캡처는 뺐어요');
-    else if (picked.length > MAX_FILES) renderPicker(`캡처는 ${MAX_FILES}장까지만 올릴 수 있어요`);
+  input.addEventListener('change', async () => {
+    const tooMany = input.files.length > MAX_FILES;
+    const picked = await Promise.all([...input.files].slice(0, MAX_FILES).map(prepareCapture));
+    files = picked.filter((file) => file.size <= MAX_FILE_SIZE);
+    if (files.length < picked.length) renderPicker('줄여도 5MB가 넘는 캡처는 뺐어요');
+    else if (tooMany) renderPicker(`캡처는 ${MAX_FILES}장까지만 올릴 수 있어요`);
     else renderPicker();
   });
 
@@ -48,6 +48,14 @@ function renderPicker(errorMessage) {
       readBtn));
 }
 
+// 거래 목록을 못 불러와도 캡처 읽기는 계속돼요. (거래 기능을 만들기 전에도 되게)
+async function loadSavedTransactions(items) {
+  const months = [...new Set(items.map((item) => item.date.slice(0, 7)))];
+  const lists = await Promise.all(months.map((month) =>
+    api('GET', `/api/transactions?month=${month}`).catch(() => [])));
+  return lists.flat();
+}
+
 async function readCaptures(event) {
   const button = event.currentTarget;
   button.disabled = true;
@@ -61,7 +69,8 @@ async function readCaptures(event) {
       renderPicker('캡처에서 거래를 찾지 못했어요. 결제내역이 잘 보이는 캡처로 다시 해 주세요');
       return;
     }
-    renderReview(items.map((item) => ({ ...item, splitCount: 1, aiCategory: item.category })));
+    const checked = markDuplicates(items, await loadSavedTransactions(items));
+    renderReview(checked.map((item) => ({ ...item, splitCount: 1, aiCategory: item.category })));
   } catch (error) {
     renderPicker(error.message);
   }
@@ -101,11 +110,14 @@ function renderRow(item, onRemove) {
   const source = item.categorySource === 'rule'
     ? el('span', { class: 'badge text-bg-success-subtle text-success-emphasis' }, '기억한 분류')
     : el('span', { class: 'badge text-bg-primary-subtle text-primary-emphasis' }, 'AI 분류');
+  const duplicate = item.maybeDuplicate
+    ? el('span', { class: 'badge text-bg-warning-subtle text-warning-emphasis' }, '이미 저장한 내역 같아요')
+    : '';
 
   const remove = el('button', { class: 'btn btn-sm btn-link text-danger p-0', type: 'button', 'aria-label': '이 거래 빼기' }, '빼기');
   const row = el('li', { class: 'list-group-item px-0 py-3' },
     el('div', { class: 'd-flex justify-content-between align-items-start mb-2' },
-      el('div', { class: 'd-flex align-items-center gap-2' }, source, remove),
+      el('div', { class: 'd-flex flex-wrap align-items-center gap-2' }, source, duplicate, remove),
       el('div', { class: 'text-end' }, share, shareNote)),
     el('div', { class: 'row g-2 align-items-center' },
       el('div', { class: 'col-12' }, merchant),
@@ -136,6 +148,7 @@ function toSavePayload(item, accountId) {
 
 function renderReview(initialItems) {
   let items = initialItems;
+  let alreadySaved = false;
   const message = el('div', { class: 'mt-3' });
   const saveBtn = el('button', { class: 'btn btn-primary w-100 mt-3', type: 'button' });
   const accountSelect = el('select', { class: 'form-select form-select-sm mb-2', 'aria-label': '결제 수단' },
@@ -144,7 +157,7 @@ function renderReview(initialItems) {
 
   function updateSaveButton() {
     saveBtn.textContent = `${items.length}건 저장하기`;
-    saveBtn.disabled = items.length === 0;
+    saveBtn.disabled = alreadySaved || items.length === 0;
   }
   updateSaveButton();
 
@@ -162,6 +175,7 @@ function renderReview(initialItems) {
     saveBtn.disabled = true;
     try {
       const { saved } = await api('POST', '/api/transactions', { items: items.map((item) => toSavePayload(item, accountSelect.value || null)) });
+      alreadySaved = true; // 저장한 뒤에 '빼기'를 눌러도 또 저장되지 않게 해요
       message.replaceChildren(el('div', { class: 'alert alert-success mb-0' },
         `${saved}건 저장했어요! `, el('a', { href: '/transactions.html' }, '내역 보러 가기')));
     } catch (error) {
