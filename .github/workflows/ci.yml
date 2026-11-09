@@ -15,6 +15,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: 채점 시험지를 고치지 않았는지 확인
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --depth=1 origin "$GITHUB_BASE_REF"
+          if ! git diff --quiet "origin/$GITHUB_BASE_REF" HEAD -- test/contract.test.js; then
+            echo "::error::test/contract.test.js는 고치면 안 돼요. 시험지가 아니라 내 코드를 고쳐 주세요."
+            exit 1
+          fi
       - run: npm ci
       - run: npm run lint
       - run: npm test

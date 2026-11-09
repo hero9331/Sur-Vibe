@@ -5,7 +5,13 @@
 - 요구사항: [docs/requirements.md](docs/requirements.md)
 - API 형식: [docs/API.md](docs/API.md)
 - 할 일: [TODO.md](TODO.md)
+- **1학년은 여기부터:** [시작 안내](docs/guides/START-HERE.md)
 - 기능별 설명서: [docs/guides/](docs/guides/)
+- 디자인 규칙: [docs/DESIGN.md](docs/DESIGN.md)
+- PR 확인 방법: [docs/REVIEW.md](docs/REVIEW.md)
+- 전체 점검표: [docs/QA.md](docs/QA.md)
+- 개인정보, AI 사용, 라이선스: [docs/RESPONSIBLE-AI.md](docs/RESPONSIBLE-AI.md)
+- 발표 준비: [docs/PRESENTATION.md](docs/PRESENTATION.md)
 
 ## 처음 실행하기
 
@@ -19,9 +25,9 @@
    npm install
    npm run dev
    ```
-4. 브라우저에서 http://localhost:3000 → 회원가입 → 로그인
+4. 브라우저에서 http://localhost:3000 → 연습 계정 `demo` / `demo1234`로 로그인
 
-`.env` 파일이 없으면 **임시 메모리 DB**로 실행돼요. 서버를 끄면 데이터가 사라지지만 개발하기엔 충분해요. (처음 실행할 때 테스트용 DB를 내려받느라 1~2분 걸려요)
+`.env` 파일이 없으면 **임시 메모리 DB**로 실행돼요. 서버를 끄면 데이터가 사라지지만 개발하기엔 충분해요. 연습 계정과 예시 거래는 이 임시 DB에만 자동으로 만들어져요. (처음 실행할 때 테스트용 DB를 내려받느라 1~2분 걸려요)
 
 ## 명령어
 
