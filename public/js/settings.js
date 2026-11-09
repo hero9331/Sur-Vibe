@@ -17,15 +17,15 @@ function renderAccounts() {
     });
     return el('li', { class: 'list-group-item px-0 d-flex justify-content-between align-items-center' },
       el('div', {},
-        el('div', { class: 'fw-semibold' }, a.type === 'bank' ? '🏦 ' : '💳 ', a.name),
-        el('div', { class: 'small text-muted' }, a.institution, a.purpose ? ` · ${a.purpose}` : '')),
+        el('div', { class: 'fw-semibold' }, a.name),
+        el('div', { class: 'small text-muted' }, a.type === 'bank' ? '계좌' : '카드', ` · ${a.institution}`, a.purpose ? ` · ${a.purpose}` : '')),
       remove);
   });
 
-  const name = el('input', { class: 'form-control', placeholder: '이름 (예: 생활비 통장)', required: true, maxLength: 30 });
-  const type = el('select', { class: 'form-select' }, el('option', { value: 'bank' }, '계좌'), el('option', { value: 'card' }, '카드'));
-  const institution = el('input', { class: 'form-control', placeholder: '은행·카드사', required: true, maxLength: 30 });
-  const purpose = el('input', { class: 'form-control', placeholder: '용도 (선택)', maxLength: 50 });
+  const name = el('input', { class: 'form-control', placeholder: '이름 (예: 생활비 통장)', 'aria-label': '계좌 이름', required: true, maxLength: 30 });
+  const type = el('select', { class: 'form-select', 'aria-label': '종류' }, el('option', { value: 'bank' }, '계좌'), el('option', { value: 'card' }, '카드'));
+  const institution = el('input', { class: 'form-control', placeholder: '은행·카드사', 'aria-label': '은행·카드사', required: true, maxLength: 30 });
+  const purpose = el('input', { class: 'form-control', placeholder: '용도 (선택)', 'aria-label': '용도', maxLength: 50 });
 
   const form = el('form', { class: 'row g-2 mt-2', novalidate: true },
     el('div', { class: 'col-md-4' }, name),
@@ -77,8 +77,8 @@ function renderBudget() {
       el('span', {}, c.name), el('span', {}, won(c.amount), remove));
   });
 
-  const costName = el('input', { class: 'form-control', placeholder: '이름 (예: 통신비)', maxLength: 30 });
-  const costAmount = el('input', { type: 'number', min: 0, class: 'form-control', placeholder: '금액' });
+  const costName = el('input', { class: 'form-control', placeholder: '이름 (예: 통신비)', 'aria-label': '고정비 이름', maxLength: 30 });
+  const costAmount = el('input', { type: 'number', min: 0, class: 'form-control', placeholder: '금액', 'aria-label': '고정비 금액' });
   const addCost = el('form', { class: 'row g-2 mt-1' },
     el('div', { class: 'col-6' }, costName),
     el('div', { class: 'col-3' }, costAmount),

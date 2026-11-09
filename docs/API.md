@@ -136,7 +136,7 @@
 }
 응답 201 { "saved": 1, "items": [ { "id": "6731...", ... } ] }
 ```
-- `amount`는 내 몫, `originalAmount`는 원래 결제 금액, `splitCount`는 더치페이 사람 수 (없으면 1)
+- `amount`는 내 몫, `originalAmount`는 원래 결제 금액, `splitCount`는 더치페이 사람 수 (없으면 1), `isExpense`는 없으면 `true`
 - `categoryEdited: true`인 건은 `learnRule()`로 규칙을 저장해요
 - 하나라도 형식이 틀리면 아무것도 저장하지 않고 400
 
@@ -178,7 +178,7 @@
 }
 ```
 - `dailyAllowance` = (월 예산 − 고정비 합계 − 어제까지 쓴 돈) ÷ 오늘 포함 남은 날짜, 원 단위 버림, 0보다 작으면 0
-- `level`: 오늘 쓴 돈이 `dailyAllowance`의 80% 미만 `"ok"`, 80% 이상 `"warning"`, 100% 이상 `"over"`
+- `level`: 오늘 쓴 돈이 `dailyAllowance`의 80% 미만 `"ok"`, 80% 이상 `"warning"`, 100% 이상 `"over"`. 예산을 아직 안 정해서 둘 다 0이면 `"ok"`
 - 지출(`isExpense: true`)만 더해요
 
 ### GET /api/summary/monthly?month=2026-11
@@ -193,7 +193,7 @@
   ]
 }
 ```
-- `byCategory`는 이번 달 금액이 큰 순서. 지출만 더해요
+- `byCategory`는 이번 달 지출이 있는 카테고리만, 금액이 큰 순서. 지출만 더해요
 
 ---
 

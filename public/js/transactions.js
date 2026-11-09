@@ -49,7 +49,7 @@ function render() {
   section.replaceChildren(
     el('div', { class: 'card p-4' },
       cardTitle('11월 내역', mockBadge(), el('div', { class: 'ms-auto' }, monthSelect)),
-      el('div', { class: 'd-flex justify-content-between bg-light rounded p-3' },
+      el('div', { class: 'receipt-total' },
         el('span', {}, `지출 ${items.filter((t) => t.isExpense).length}건`),
         el('span', { class: 'fw-bold' }, `합계 ${won(expenseTotal)}`)),
       items.length ? groups : el('p', { class: 'text-muted text-center my-4' }, '아직 내역이 없어요')));

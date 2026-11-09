@@ -9,11 +9,13 @@
 
 ## 처음 실행하기
 
-1. [Node.js](https://nodejs.org) LTS 버전 설치
-2. 프로젝트 폴더를 **경로에 한글이 없는 곳**에 둬요. (예: `C:\dev\budget-app`)
+1. [Node.js](https://nodejs.org) LTS 버전과 [Git](https://git-scm.com) 설치
+2. **경로에 한글이 없는 폴더**에서 코드를 받아요. (예: `C:\dev`)
    - `바탕 화면` 같은 한글 폴더 안에 두면 Node가 갑자기 꺼질 수 있어요.
 3. 터미널에서:
    ```bash
+   git clone https://github.com/hero9331/Sur-Vibe.git
+   cd Sur-Vibe
    npm install
    npm run dev
    ```
@@ -26,7 +28,7 @@
 | 명령어 | 하는 일 |
 |---|---|
 | `npm run dev` | 서버 실행 (코드를 고치면 자동으로 다시 시작) |
-| `npm test` | 테스트 실행 |
+| `npm test` | 테스트 실행. `[A]`~`[D]`는 내 기능을 채점하는 시험지예요. 안 만든 기능은 건너뛰어요 |
 | `npm run lint` | 코드 검사 (ESLint) |
 
 ## 폴더 구조
@@ -45,7 +47,8 @@ src/
   utils/            HttpError
 public/             화면 (HTML, CSS, JS)
 data/               카테고리, 청년 정책 목록 (JSON)
-docs/               요구사항, API 문서, 설명서
+docs/               요구사항, API 문서, 설명서, 배포 순서
+eval/               캡처 인식 정확도 재기
 test/               테스트
 ```
 
@@ -73,9 +76,10 @@ git commit -m "F1 계좌 목록 API 추가"
 git push -u origin feature/내기능이름
 ```
 
-GitHub에서 Pull Request를 만들면 박영웅이 확인하고 main에 합쳐요.
+GitHub에서 Pull Request를 만들면 자동 검사가 돌아가고, 박영웅이 확인한 뒤 main에 합쳐요.
 
 ## 보안 규칙
 
 - `.env`는 절대 GitHub에 올리지 않아요. (`.gitignore`에 등록돼 있어요)
 - 테스트용 결제내역 캡처는 이름, 카드번호, 계좌번호를 가린 것만 써요.
+- 이 저장소는 공개예요. 진짜 캡처는 `eval/private/`에만 두고 GitHub에 올리지 않아요.

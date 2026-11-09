@@ -37,7 +37,7 @@ function renderPicker(errorMessage) {
     el('div', { class: 'small text-muted' }, `은행·카드 앱 화면 캡처 · 최대 ${MAX_FILES}장 · 이름, 카드번호는 가려 주세요`));
 
   const readBtn = el('button', { class: 'btn btn-primary w-100', type: 'button', disabled: files.length === 0, onclick: readCaptures },
-    files.length ? `AI로 읽기 (${files.length}장)` : 'AI로 읽기');
+    files.length ? `내역 정리하기 (${files.length}장)` : '내역 정리하기');
 
   section.replaceChildren(
     el('div', { class: 'card p-4' },
@@ -51,7 +51,7 @@ function renderPicker(errorMessage) {
 async function readCaptures(event) {
   const button = event.currentTarget;
   button.disabled = true;
-  button.replaceChildren(el('span', { class: 'spinner-border spinner-border-sm me-2' }), 'AI가 읽는 중...');
+  button.replaceChildren(el('span', { class: 'spinner-border spinner-border-sm me-2' }), '영수증 정리하는 중...');
 
   try {
     const form = new FormData();

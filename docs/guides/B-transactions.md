@@ -32,8 +32,8 @@
 ```
 
 API가 되면 다음을 시켜요.
-1. `public/transactions.html`과 `public/js/transactions.js`에 달 선택 + 거래 목록 표 만들기
-2. 표에서 카테고리를 드롭다운으로 바꾸면 바로 저장, 삭제 버튼 만들기 (카테고리 목록은 `GET /api/categories`)
+1. `public/transactions.html`과 `public/js/transactions.js`에 달 선택 + 거래 목록 만들기 (지금 예시 화면 모양 유지)
+2. 목록에서 카테고리를 드롭다운으로 바꾸면 바로 저장, 삭제 버튼 만들기 (카테고리 목록은 `GET /api/categories`)
 
 ## 확인하는 법
 1. `npm run dev`, 가입·로그인
@@ -46,6 +46,7 @@ API가 되면 다음을 시켜요.
 4. `npm run lint` 경고 0개
 
 ## 다 됐다는 기준
+- [ ] `npm test`에서 `[B]` 테스트가 건너뛰지 않고 모두 통과
 - [ ] 달을 바꾸면 그 달 거래만 보임
 - [ ] 카테고리를 고치면 저장되고, 규칙도 저장됨
 - [ ] 삭제가 됨
