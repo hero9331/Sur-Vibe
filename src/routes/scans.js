@@ -3,6 +3,7 @@
 const express = require('express');
 const multer = require('multer');
 const { CATEGORY_NAMES, isExpenseCategory } = require('../categories');
+const { Account } = require('../models');
 const { readCaptures, detectImageType } = require('../services/scanner');
 const { findRuleCategory } = require('../services/rules');
 const { HttpError } = require('../utils/httpError');
@@ -52,7 +53,10 @@ async function applyRules(userId, item) {
 router.post('/', receiveImages, async (req, res) => {
   if (!req.files?.length) throw new HttpError(400, '캡처를 1장 이상 올려 주세요');
 
-  const items = await readCaptures(toImages(req.files));
+  // 내 계좌로 보낸 돈을 지출에서 빼려면 AI가 내 계좌 이름을 알아야 해요.
+  const images = toImages(req.files);
+  const accounts = await Account.find({ user: req.userId }).select('name institution').lean();
+  const items = await readCaptures(images, accounts);
   res.json({ items: await Promise.all(items.map((item) => applyRules(req.userId, item))) });
 });
 

@@ -8,6 +8,7 @@ const MAX_SPLIT = 20;
 const section = document.getElementById('upload-section');
 let files = [];
 let categories = [];
+let accounts = [];
 
 function errorBox(message) {
   return message ? el('div', { class: 'alert alert-danger py-2', role: 'alert' }, message) : '';
@@ -119,7 +120,7 @@ function renderRow(item, onRemove) {
   return row;
 }
 
-function toSavePayload(item) {
+function toSavePayload(item, accountId) {
   return {
     date: item.date,
     merchant: item.merchant.trim(),
@@ -127,7 +128,7 @@ function toSavePayload(item) {
     originalAmount: item.amount,
     splitCount: item.splitCount,
     category: item.category,
-    accountId: null,
+    accountId,
     isExpense: isExpense(item.category),
     categoryEdited: item.category !== item.aiCategory,
   };
@@ -137,6 +138,9 @@ function renderReview(initialItems) {
   let items = initialItems;
   const message = el('div', { class: 'mt-3' });
   const saveBtn = el('button', { class: 'btn btn-primary w-100 mt-3', type: 'button' });
+  const accountSelect = el('select', { class: 'form-select form-select-sm mb-2', 'aria-label': '결제 수단' },
+    el('option', { value: '' }, '결제 수단 고르기 (선택)'),
+    accounts.map((a) => el('option', { value: a.id }, a.name)));
 
   function updateSaveButton() {
     saveBtn.textContent = `${items.length}건 저장하기`;
@@ -157,7 +161,7 @@ function renderReview(initialItems) {
 
     saveBtn.disabled = true;
     try {
-      const { saved } = await api('POST', '/api/transactions', { items: items.map(toSavePayload) });
+      const { saved } = await api('POST', '/api/transactions', { items: items.map((item) => toSavePayload(item, accountSelect.value || null)) });
       message.replaceChildren(el('div', { class: 'alert alert-success mb-0' },
         `${saved}건 저장했어요! `, el('a', { href: '/transactions.html' }, '내역 보러 가기')));
     } catch (error) {
@@ -170,13 +174,17 @@ function renderReview(initialItems) {
     el('div', { class: 'card p-4' },
       cardTitle('2. 읽은 내용 확인하기'),
       el('p', { class: 'small text-muted' }, 'AI가 틀릴 수 있어요. 금액과 가게 이름을 확인해 주세요. 고친 분류는 기억했다가 다음부터 자동으로 적용해요.'),
+      accounts.length ? accountSelect : '',
       el('ul', { class: 'list-group list-group-flush' }, rows),
       saveBtn, message,
       el('button', { class: 'btn btn-link w-100 mt-2', type: 'button', onclick: () => { files = []; renderPicker(); } }, '다른 캡처 올리기')));
 }
 
 try {
-  categories = await api('GET', '/api/categories');
+  [categories, accounts] = await Promise.all([
+    api('GET', '/api/categories'),
+    api('GET', '/api/accounts').catch(() => []), // 계좌 기능을 만들기 전에도 올리기는 되게 해요
+  ]);
   renderPicker();
 } catch (error) {
   section.replaceChildren(errorBox(error.message));

@@ -7,7 +7,7 @@ const config = require('../src/config');
 const { connectDb, disconnectDb } = require('../src/db');
 const { createApp } = require('../src/app');
 const { learnRule } = require('../src/services/rules');
-const { User } = require('../src/models');
+const { User, Account } = require('../src/models');
 const { normalizeItems, detectImageType } = require('../src/services/scanner');
 
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
@@ -168,6 +168,19 @@ test('내가 고친 규칙이 AI 분류보다 먼저 적용되고, 남의 규칙
   assert.equal(items[0].categorySource, 'rule');
   assert.equal(items[1].category, '외식');
   assert.equal(items[1].categorySource, 'ai');
+});
+
+test('내 계좌 이름만 AI에게 알려 주고, 내 계좌 이체와 남에게 보낸 돈을 구분하게 한다', async () => {
+  const me = await User.findOne({ username: 'scanner1' });
+  const other = await User.findOne({ username: 'someone2' });
+  await Account.create({ user: me.id, name: '저축 통장', type: 'bank', institution: '카카오뱅크' });
+  await Account.create({ user: other.id, name: '남의 비밀통장', type: 'bank', institution: '국민은행' });
+
+  await upload([PNG]);
+  const text = lastRequest.body.messages[0].content.at(-1).text;
+  assert.match(text, /저축 통장\(카카오뱅크\)/);
+  assert.doesNotMatch(text, /남의 비밀통장/);
+  assert.match(lastRequest.body.system, /다른 사람에게 보낸 돈은 지출/);
 });
 
 test('AI가 거절하거나 답이 잘리면 422', async () => {
