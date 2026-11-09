@@ -32,7 +32,6 @@ function renderPicker(errorMessage) {
     el('div', { class: 'col' }, el('img', { src: URL.createObjectURL(file), alt: file.name, class: 'img-fluid rounded border preview-img' })));
 
   const drop = el('label', { class: 'drop-zone d-block text-center p-4 mb-3', for: 'file-input' },
-    el('div', { class: 'fs-1' }, '📷'),
     el('div', { class: 'fw-semibold' }, '결제내역 캡처를 골라 주세요'),
     el('div', { class: 'small text-muted' }, `은행·카드 앱 화면 캡처 · 최대 ${MAX_FILES}장 · 이름, 카드번호는 가려 주세요`));
 
