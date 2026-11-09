@@ -3,4 +3,8 @@ const categories = require('../data/categories.json');
 
 const CATEGORY_NAMES = categories.map((c) => c.name);
 
-module.exports = { categories, CATEGORY_NAMES };
+function isExpenseCategory(name) {
+  return categories.find((c) => c.name === name)?.isExpense !== false;
+}
+
+module.exports = { categories, CATEGORY_NAMES, isExpenseCategory };
