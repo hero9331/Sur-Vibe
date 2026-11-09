@@ -10,7 +10,7 @@ const config = {
   // 개발할 때만 기본값을 써요. 배포할 때는 반드시 .env에 JWT_SECRET을 넣어야 해요.
   jwtSecret: process.env.JWT_SECRET || (isProd ? '' : 'dev-only-secret-change-me'),
   anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
-  anthropicModel: process.env.ANTHROPIC_MODEL || 'claude-opus-5-5',
+  anthropicModel: process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5',
 };
 
 if (isProd && !config.jwtSecret) {

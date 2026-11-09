@@ -67,6 +67,7 @@ before(async () => {
 
 beforeEach(() => {
   config.anthropicApiKey = 'test-key';
+  config.anthropicModel = 'claude-haiku-5-5';
   lastRequest = undefined;
   replyWith([]);
 });
@@ -141,9 +142,8 @@ test('캡처를 Claude에 보내고 읽은 결과를 저장 없이 돌려준다'
 
   const sent = lastRequest.body;
   assert.equal(lastRequest.headers.authorization, 'Bearer test-key');
-  assert.match(lastRequest.headers['anthropic-beta'], /server-side-fallback-2026-07-01/);
-  assert.equal(sent.model, config.anthropicModel);
-  assert.equal(sent.fallbacks, 'default');
+  assert.equal(sent.model, 'claude-haiku-5-5');
+  assert.equal(sent.fallbacks, undefined);
   assert.equal(sent.output_config.format.type, 'json_schema');
   const imageBlocks = sent.messages[0].content.filter((b) => b.type === 'image');
   assert.equal(imageBlocks.length, 2);
@@ -181,6 +181,14 @@ test('내 계좌 이름만 AI에게 알려 주고, 내 계좌 이체와 남에�
   assert.match(text, /저축 통장\(카카오뱅크\)/);
   assert.doesNotMatch(text, /남의 비밀통장/);
   assert.match(lastRequest.body.system, /다른 사람에게 보낸 돈은 지출/);
+});
+
+test('Opus로 바꾸면 거절 시 다른 모델이 이어받게 요청한다', async () => {
+  config.anthropicModel = 'claude-opus-5-5';
+  await upload([PNG]);
+  assert.equal(lastRequest.body.model, 'claude-opus-5-5');
+  assert.equal(lastRequest.body.fallbacks, 'default');
+  assert.match(lastRequest.headers['anthropic-beta'], /server-side-fallback-2026-07-01/);
 });
 
 test('AI가 거절하거나 답이 잘리면 422', async () => {
