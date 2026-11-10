@@ -3,17 +3,21 @@
 // 예) el('p', { class: 'text-muted' }, '안녕하세요')
 //     el('button', { class: 'btn btn-primary', onclick: () => alert('클릭') }, '저장')
 
+const isEmpty = (value) => value === undefined || value === null || value === false;
+
+function setAttr(node, key, value) {
+  if (isEmpty(value)) return;
+  if (key === 'class') node.className = value;
+  else if (key.startsWith('on')) node.addEventListener(key.slice(2), value);
+  else if (key in node && key !== 'list') node[key] = value;
+  else node.setAttribute(key, value);
+}
+
 export function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
-  for (const [key, value] of Object.entries(attrs)) {
-    if (value === undefined || value === null || value === false) continue;
-    if (key === 'class') node.className = value;
-    else if (key.startsWith('on')) node.addEventListener(key.slice(2), value);
-    else if (key in node && key !== 'list') node[key] = value;
-    else node.setAttribute(key, value);
-  }
+  Object.entries(attrs).forEach(([key, value]) => setAttr(node, key, value));
   for (const child of children.flat()) {
-    if (child === undefined || child === null || child === false) continue;
+    if (isEmpty(child)) continue;
     node.append(child instanceof Node ? child : document.createTextNode(String(child)));
   }
   return node;

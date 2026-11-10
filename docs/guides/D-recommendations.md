@@ -36,6 +36,8 @@
        notImplemented는 지우고, 항상 user: req.userId 조건으로 계산해 줘.
        targets는 이번 달 가장 많이 쓴 카테고리와 지난달보다 가장 많이 늘어난 카테고리야.
        items는 data/policies.json에서 targets 카테고리에 맞는 것만 골라 줘.
+[Constraints] 담당 파일만 고치고 새 패키지는 설치하지 마. test/contract.test.js는 고치지 마.
+       이번 달 거래가 없을 때, 지난달 거래가 없을 때, 맞는 정책이 없는 카테고리일 때도 오류 없이 답하게 해.
 [Format] 코드를 고친 뒤 무엇을 바꿨는지 3줄로 알려 줘.
 ```
 

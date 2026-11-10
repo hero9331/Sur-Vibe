@@ -33,6 +33,8 @@
        날짜 계산은 한국 시간(Asia/Seoul) 기준으로 해 줘.
        오늘 예산의 쓴 돈에서는 src/services/fixedCosts.js의 isFixedCost()로 고정비 결제를 빼 줘.
        계산 부분은 따로 함수로 빼서 테스트하기 쉽게 해 줘.
+[Constraints] 담당 파일만 고치고 새 패키지는 설치하지 마. test/contract.test.js는 고치지 마.
+       거래나 설정이 하나도 없을 때, 매달 1일과 마지막 날, 예산보다 많이 쓴 날도 docs/API.md 모양대로 답하게 해.
 [Format] 코드를 고친 뒤 무엇을 바꿨는지 3줄로 알려 줘.
 ```
 

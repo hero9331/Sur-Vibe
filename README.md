@@ -10,6 +10,7 @@
 - 시스템 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - 작업 쪼개기: [docs/WBS.md](docs/WBS.md)
 - 회고: [docs/RETRO.md](docs/RETRO.md)
+- **수업 내용 반영표:** [docs/LECTURE-MAP.md](docs/LECTURE-MAP.md)
 - 기능별 설명서: [docs/guides/](docs/guides/)
 - 디자인 규칙: [docs/DESIGN.md](docs/DESIGN.md)
 - PR 확인 방법: [docs/REVIEW.md](docs/REVIEW.md)
@@ -52,7 +53,8 @@ Node.js, Express 5, MongoDB Atlas + Mongoose, JWT, Bootstrap 5, 바닐라 JavaSc
 |---|---|
 | `npm run dev` | 서버 실행 (코드를 고치면 자동으로 다시 시작) |
 | `npm test` | 테스트 실행. `[A]`~`[D]`는 내 기능을 채점하는 시험지예요. 안 만든 기능은 건너뛰어요 |
-| `npm run lint` | 코드 검사 (ESLint) |
+| `npm run lint` | 코드 검사 (ESLint). 경고가 하나라도 있으면 실패해요 |
+| `npm run coverage` | 테스트가 코드의 몇 %를 확인하는지 보기 |
 
 ## 폴더 구조
 
