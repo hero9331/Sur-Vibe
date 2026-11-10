@@ -6,12 +6,29 @@
 - API 형식: [docs/API.md](docs/API.md)
 - 할 일: [TODO.md](TODO.md)
 - **1학년은 여기부터:** [시작 안내](docs/guides/START-HERE.md)
+- 협업 규칙 (브랜치, 커밋, PR, 충돌): [CONTRIBUTING.md](CONTRIBUTING.md)
+- 시스템 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- 작업 쪼개기: [docs/WBS.md](docs/WBS.md)
+- 회고: [docs/RETRO.md](docs/RETRO.md)
 - 기능별 설명서: [docs/guides/](docs/guides/)
 - 디자인 규칙: [docs/DESIGN.md](docs/DESIGN.md)
 - PR 확인 방법: [docs/REVIEW.md](docs/REVIEW.md)
 - 전체 점검표: [docs/QA.md](docs/QA.md)
 - 개인정보, AI 사용, 라이선스: [docs/RESPONSIBLE-AI.md](docs/RESPONSIBLE-AI.md)
 - 발표 준비: [docs/PRESENTATION.md](docs/PRESENTATION.md)
+
+## 주요 기능
+
+- 결제내역 캡처를 올리면 AI가 날짜, 가게, 금액, 카테고리를 읽고 확인 후 저장
+- 고친 분류를 기억해서 다음부터 자동 적용, 더치페이는 내 몫만 기록
+- 내 계좌끼리 보낸 돈은 지출에서 제외
+- 오늘 쓸 수 있는 돈과 예산 경고
+- 카테고리별 그래프, 지난달과 비교
+- 많이 쓴 분야를 아낄 수 있는 청년 정책·대안 추천
+
+## 기술 스택
+
+Node.js, Express 5, MongoDB Atlas + Mongoose, JWT, Bootstrap 5, 바닐라 JavaScript, Claude API, GitHub Actions, Cloud Run
 
 ## 처음 실행하기
 
@@ -78,7 +95,7 @@ git pull
 git checkout -b feature/내기능이름    # 처음 한 번만
 # ... AI와 같이 코드 만들기 ...
 git add .
-git commit -m "F1 계좌 목록 API 추가"
+git commit -m "feat: 계좌 목록 API 추가"
 git push -u origin feature/내기능이름
 ```
 

@@ -96,21 +96,21 @@ git checkout -b feature/내기능
 1. 설명서의 **AI에게 줄 첫 지시**를 AI 도구에 붙여 넣어요. 한 번에 하나만 시켜요.
 2. `npm run dev`로 직접 눌러 봐요.
 3. `npm test`, `npm run lint`로 확인해요.
-4. 작은 단위로 저장해요.
+4. 작은 단위로 저장해요. 커밋 메시지는 `feat: 무엇을 했는지` 모양이에요. 종류는 [협업 규칙](../../CONTRIBUTING.md)에 있어요.
 
 ```bash
 git add .
 ```
 
 ```bash
-git commit -m "F1 계좌 목록 API 추가"
+git commit -m "feat: 계좌 목록 API 추가"
 ```
 
 ```bash
 git push -u origin feature/내기능
 ```
 
-5. 기능이 끝나면 GitHub에서 **Compare & pull request**를 눌러요. 체크리스트를 채우고 만들어요.
+5. **API가 되면 한 번, 화면이 되면 한 번** PR을 올려요. 올리기 전에 AI에게 먼저 검토받아요. (방법은 [협업 규칙](../../CONTRIBUTING.md)) GitHub에서 **Compare & pull request**를 눌러요. 체크리스트를 채우고 만들어요.
 6. 자동 검사가 초록색이 되면 박영웅이 확인하고 합쳐요. 고쳐 달라고 하면 같은 브랜치에서 고쳐서 다시 push해요.
 
 `npm test`에서 내 기능 시험이 `SKIP`이면 아직 안 만들었다는 뜻이에요. 다 만들면 전부 통과해야 해요. **시험지(`test/contract.test.js`)는 고치면 안 돼요.** 고치면 자동 검사가 막아요.
@@ -146,5 +146,6 @@ AI가 내 담당이 아닌 파일이나 시험지를 고치려고 하면 **거�
 | 화면이 안 바뀌어요 | `Ctrl + Shift + R`로 새로고침해요 |
 | 인라인 코드가 실행되지 않고 콘솔에 CSP 오류가 나요 | `<script>` 안쪽 코드와 `style="..."`는 막혀 있어요. 파일로 빼요 |
 | push가 거절돼요 | `git pull origin main`을 한 뒤 다시 push해요 |
-| `CONFLICT`가 떠요 | 혼자 지우지 말고 단톡방에 알려요 |
+| `CONFLICT`가 떠요 | [협업 규칙](../../CONTRIBUTING.md)의 충돌 해결 순서대로 해요. 내 파일이 아니면 단톡방에 물어봐요 |
+| 버그를 찾았어요 | 오류 화면 캡처와 콘솔 메시지를 AI에게 주고 "재현 순서, 기대 결과, 실제 결과로 정리해 줘"라고 한 뒤 Issues에 올려요 |
 | 자동 검사가 빨간색이에요 | PR의 **Details**를 눌러 로그를 AI에게 보여 주고 원인을 물어봐요 |
