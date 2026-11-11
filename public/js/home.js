@@ -36,7 +36,7 @@ function render() {
   const left = Math.max(0, s.dailyAllowance - s.spentToday);
   const percent = Math.min(100, Math.round(s.ratio * 100));
 
-  const bar = el('div', { class: `progress-bar ${ui.bar}`, role: 'progressbar', 'aria-valuenow': percent, 'aria-valuemin': 0, 'aria-valuemax': 100 });
+  const bar = el('div', { class: `progress-bar ${ui.bar}`, role: 'progressbar', 'aria-label': '오늘 예산 사용률', 'aria-valuenow': percent, 'aria-valuemin': 0, 'aria-valuemax': 100 });
   bar.style.width = `${percent}%`;
 
   const line = (label, value) => el('div', { class: 'receipt-line' },
@@ -50,7 +50,7 @@ function render() {
     el('div', { class: 'd-flex justify-content-between small text-muted mb-1' },
       el('span', {}, `오늘 쓴 돈 ${won(s.spentToday)}`),
       el('span', {}, `${percent}%`)),
-    el('div', { class: 'progress mb-3', 'aria-label': '오늘 예산 사용률' }, bar),
+    el('div', { class: 'progress mb-3' }, bar),
     el('div', { class: `alert ${ui.alert} py-2 mb-3` }, ui.text(left)),
     line('이번 달 쓴 돈', won(spentMonth)),
     line('남은 예산', won(Math.max(0, mockSettings.monthlyBudget - s.fixedTotal - spentMonth))),
@@ -65,7 +65,7 @@ function render() {
       el('div', { class: 'fw-semibold' }, won(t.amount))));
 
   const recentCard = el('div', { class: 'card p-4 mb-3' },
-    cardTitle('최근 내역', el('a', { class: 'ms-auto small', href: '/transactions.html' }, '전체 보기')),
+    cardTitle('최근 내역', el('a', { class: 'ms-auto small', href: '/transactions.html' }, '내역 전체 보기')),
     el('ul', { class: 'list-group list-group-flush' }, recent));
 
   const cta = el('a', { class: 'btn btn-primary btn-lg w-100', href: '/upload.html' }, '결제내역 캡처 올리기');

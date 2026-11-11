@@ -16,6 +16,10 @@ async function connectDb(uri = config.mongodbUri) {
   await mongoose.connect(uri);
 }
 
+function isMemoryDb() {
+  return memoryServer !== null;
+}
+
 async function disconnectDb() {
   await mongoose.disconnect();
   if (memoryServer) {
@@ -24,4 +28,4 @@ async function disconnectDb() {
   }
 }
 
-module.exports = { connectDb, disconnectDb };
+module.exports = { connectDb, disconnectDb, isMemoryDb };
