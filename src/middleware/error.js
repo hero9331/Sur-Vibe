@@ -23,7 +23,8 @@ function errorHandler(err, req, res, next) {
 
   if (status >= 500) {
     console.error(err);
-    message = '서버에 문제가 생겼어요';
+    // 우리가 직접 쓴 HttpError 문구만 보여 주고, 예상 못 한 오류의 내용은 숨겨요.
+    if (!(err instanceof HttpError)) message = '서버에 문제가 생겼어요';
   }
   res.status(status).json({ error: message });
 }

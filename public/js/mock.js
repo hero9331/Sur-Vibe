@@ -44,14 +44,6 @@ export const mockPrevMonth = {
   교통: 28000, 학업: 0, 쇼핑: 45000, 구독: 13500,
 };
 
-// 캡처를 읽었을 때 AI가 돌려주는 예시 결과
-export const mockScanResult = [
-  { date: '2026-11-06', merchant: '이디야커피 왕십리역점', amount: 4500, category: '카페', categorySource: 'ai' },
-  { date: '2026-11-06', merchant: '학생식당', amount: 6000, category: '학식', categorySource: 'rule' },
-  { date: '2026-11-05', merchant: '교촌치킨 한양대점', amount: 24000, category: '배달', categorySource: 'ai' },
-  { date: '2026-11-05', merchant: '카카오T 택시', amount: 8700, category: '교통', categorySource: 'ai' },
-];
-
 export const mockRecommendations = {
   targets: [
     { category: '배달', reason: 'most', amount: 33400, diff: 12400 },
