@@ -7,6 +7,7 @@
 - 할 일: [TODO.md](TODO.md)
 - **1학년은 여기부터:** [시작 안내](docs/guides/START-HERE.md)
 - 협업 규칙 (브랜치, 커밋, PR, 충돌): [CONTRIBUTING.md](CONTRIBUTING.md)
+- 결정 기록 (무엇을 왜 정했나): [docs/DECISIONS.md](docs/DECISIONS.md)
 - 시스템 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - 작업 쪼개기: [docs/WBS.md](docs/WBS.md)
 - 회고: [docs/RETRO.md](docs/RETRO.md)

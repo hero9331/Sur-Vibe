@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -18,9 +20,17 @@ jobs:
       - name: 채점 시험지를 고치지 않았는지 확인
         if: github.event_name == 'pull_request'
         run: |
-          git fetch --depth=1 origin "$GITHUB_BASE_REF"
           if ! git diff --quiet "origin/$GITHUB_BASE_REF" HEAD -- test/contract.test.js; then
             echo "::error::test/contract.test.js는 고치면 안 돼요. 시험지가 아니라 내 코드를 고쳐 주세요."
+            exit 1
+          fi
+      - name: 커밋 메시지 규칙 확인 (CONTRIBUTING.md)
+        if: github.event_name == 'pull_request'
+        run: |
+          bad=$(git log --no-merges --format=%s "origin/$GITHUB_BASE_REF..HEAD" | grep -vE '^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::커밋 메시지는 'feat: 계좌 목록 API 추가'처럼 '종류: 내용'으로 써요. 규칙에 안 맞는 커밋:"
+            echo "$bad"
             exit 1
           fi
       - run: npm ci
