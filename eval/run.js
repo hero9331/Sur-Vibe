@@ -52,19 +52,21 @@ function scoreCases(results) {
     score.extras += extras.length;
     extras.forEach((got) => problems.push(`[${name}] 없는 거래를 적음: ${got.merchant} ${got.amount}원`));
 
-    for (const { want, got } of pairs) {
-      if (!got) {
-        problems.push(`[${name}] 못 찾음: ${want.merchant} ${want.amount}원`);
-        continue;
-      }
-      score.found += 1;
-      for (const field of ['date', 'merchant', 'amount', 'category']) {
-        if (compareField(field, want, got)) score[field] += 1;
-        else problems.push(`[${name}] ${want.merchant}: ${field} 틀림 (정답 ${want[field]} / 읽음 ${got[field]})`);
-      }
-    }
+    pairs.forEach((pair) => scorePair(name, pair, score, problems));
   }
   return { score, problems };
+}
+
+function scorePair(name, { want, got }, score, problems) {
+  if (!got) {
+    problems.push(`[${name}] 못 찾음: ${want.merchant} ${want.amount}원`);
+    return;
+  }
+  score.found += 1;
+  for (const field of ['date', 'merchant', 'amount', 'category']) {
+    if (compareField(field, want, got)) score[field] += 1;
+    else problems.push(`[${name}] ${want.merchant}: ${field} 틀림 (정답 ${want[field]} / 읽음 ${got[field]})`);
+  }
 }
 
 function percent(value, total) {

@@ -1,5 +1,7 @@
 # 1학년 A 설명서 — F1 계좌·카드, 설정
 
+처음이면 [시작 안내](START-HERE.md)부터 봐요.
+
 ## 내가 만드는 것
 설정 화면에서
 1. 내 계좌·카드를 **등록, 보기, 고치기, 지우기**
@@ -26,6 +28,8 @@ Claude Code나 Codex에 그대로 붙여 넣어요.
 [Context] 이 프로젝트의 AGENTS.md, docs/API.md, src/models/Account.js, src/models/Setting.js를 먼저 읽어.
 [Task] src/routes/accounts.js에 docs/API.md의 "F1 계좌·카드" API 4개를 만들어 줘.
        notImplemented는 지우고, 모든 조회·수정·삭제에 user: req.userId 조건을 넣어 줘.
+[Constraints] 담당 파일만 고치고 새 패키지는 설치하지 마. test/contract.test.js는 고치지 마.
+       빈 이름, 30자가 넘는 이름, 잘못된 id 형식, 남의 계좌를 각각 docs/API.md에 적힌 상태 코드로 처리해.
 [Format] 코드를 고친 뒤 무엇을 바꿨는지 3줄로 알려 줘.
 ```
 

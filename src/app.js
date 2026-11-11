@@ -56,7 +56,9 @@ function createApp() {
   app.use('/api', notFound);
 
   // 화면 파일(public 폴더)도 같은 서버에서 보내요. 주소가 같아서 CORS 문제가 없어요.
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  const publicDir = path.join(__dirname, '..', 'public');
+  app.use(express.static(publicDir));
+  app.use((req, res) => res.status(404).sendFile(path.join(publicDir, '404.html')));
 
   app.use(errorHandler);
   return app;

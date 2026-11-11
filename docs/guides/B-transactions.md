@@ -1,5 +1,7 @@
 # 1학년 B 설명서 — F3 거래 내역
 
+처음이면 [시작 안내](START-HERE.md)부터 봐요.
+
 ## 내가 만드는 것
 1. 거래 여러 건을 한 번에 **저장**하는 API (올리기 화면의 저장 버튼이 불러요)
 2. 거래 내역 화면에서 달마다 **보기, 고치기, 지우기**
@@ -28,6 +30,8 @@
        notImplemented는 지우고, 모든 조회·수정·삭제에 user: req.userId 조건을 넣어 줘.
        POST는 items 중 하나라도 틀리면 아무것도 저장하지 말고 400을 돌려줘.
        카테고리가 바뀌는 경우(POST의 categoryEdited: true, PATCH의 category)에는 learnRule()을 불러 줘.
+[Constraints] 담당 파일만 고치고 새 패키지는 설치하지 마. test/contract.test.js는 고치지 마.
+       0원이나 음수 금액, 없는 카테고리, 없는 날짜(2월 30일), 남의 거래를 각각 docs/API.md에 적힌 상태 코드로 처리해.
 [Format] 코드를 고친 뒤 무엇을 바꿨는지 3줄로 알려 줘.
 ```
 

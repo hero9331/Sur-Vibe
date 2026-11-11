@@ -27,8 +27,12 @@ Claude Code와 Codex가 이 프로젝트에서 코드를 만들 때 지켜야 �
     - 이모지를 쓰지 않는다. 그림자, 그라데이션, 크게 둥근 모서리를 넣지 않는다.
     - 금액은 오른쪽에 크게, 항목은 `receipt-line`처럼 이름과 금액을 한 줄로 놓는다. 합계는 `receipt-total`을 쓴다.
     - 숫자 카드를 3~4개 나란히 놓는 대시보드 모양은 만들지 않는다.
+    - 화면 부품의 예시는 `docs/DESIGN.md`에 있다.
+14. `test/contract.test.js`는 시험지다. 통과하려고 시험지를 고치지 않는다. 자동 검사가 막는다.
+15. 커밋 메시지는 `feat: 계좌 목록 API 추가`처럼 `종류: 내용`으로 쓴다. 종류는 feat, fix, docs, style, refactor, test, chore. (`CONTRIBUTING.md`)
+16. 코드를 바꾸면 관련 문서(`docs/API.md`, 설명서)도 같이 고친다.
 
 ## 확인 방법
-- `npm run dev` → http://localhost:3000
+- `npm run dev` → http://localhost:3000 (연습 계정 `demo` / `demo1234`. 임시 DB에만 있고 예시 거래가 들어 있다)
 - `npm run lint` → 경고 0개
 - `npm test` → 실패 0개. 내 기능의 `[A]`~`[D]` 시험은 건너뛰지 않고 통과해야 한다. `test/contract.test.js`는 고치지 않는다.
