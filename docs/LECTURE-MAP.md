@@ -13,7 +13,7 @@
 | 7강 | 명세서, TODO로 계획, MongoDB Atlas, Cloud Run, `.env.example`, MCP | 명세서 v1.3, TODO, Atlas + Cloud Run 배포 순서, Context7 안내 | `docs/requirements.md`, `TODO.md`, `docs/DEPLOY.md` |
 | 8강 | `.env` 분리, API 호출의 타임아웃·재시도, 429 대응, JSON | Claude 호출 타임아웃 120초·재시도 1번, 429를 쉬운 말로 안내, CSV 내보내기는 다음 후보 | `src/services/scanner.js`, `docs/requirements.md` 13장 |
 | 9강 | Express, 미들웨어, REST, 상태 코드, Validation, 중앙 오류 처리, JWT, helmet, Rate Limit, API 문서 | 전부 사용. 캡처 읽기는 사람별·전체 횟수 제한 | `src/app.js`, `docs/API.md` |
-| 10강 | GitHub Flow, 커밋 컨벤션, WBS와 칸반, 충돌 해결, PR 템플릿, AI 셀프 리뷰, API 계약과 Mock, 문서화, 짝 검증, CI와 브랜치 보호, KPT 회고, 이슈 양식, 키 유출 대응 | 전부 반영. main 보호와 키 업로드 차단을 켬 | `CONTRIBUTING.md`, `docs/WBS.md`, `docs/ARCHITECTURE.md`, `docs/RETRO.md` |
+| 10강 | GitHub Flow, 커밋 컨벤션, WBS와 칸반, 충돌 해결, PR 템플릿, AI 셀프 리뷰, API 계약과 Mock, 문서화, 짝 검증, CI와 브랜치 보호, KPT 회고, 이슈 양식, 키 유출 대응 | 전부 반영. 규칙 합의 표, 결정 기록, 커밋 메시지 자동 검사, main 보호, 키 업로드 차단 | `CONTRIBUTING.md`, `docs/WBS.md`, `docs/ARCHITECTURE.md`, `docs/RETRO.md` |
 | 12주차 (계획서) | 개인정보, 라이선스, 표절, 환각 대응 | 캡처 저장 안 함, 오픈소스 라이선스 표, 정책은 사람이 출처 확인 | `docs/RESPONSIBLE-AI.md` |
 | 13주차 (계획서) | 배포와 운영, 데모 준비 | 로그, 되돌리기, 요금 한도, 시연 대비책 | `docs/DEPLOY.md`, `docs/PRESENTATION.md` |
 
