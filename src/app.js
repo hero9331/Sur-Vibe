@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const config = require('./config');
+const { isMemoryDb } = require('./db');
 const { requireAuth } = require('./middleware/auth');
 const { notFound, errorHandler } = require('./middleware/error');
 
@@ -11,7 +12,7 @@ function createApp() {
 
   // 배포 서버(Cloud Run, Vercel)는 프록시를 거쳐서 들어와요.
   // 이 설정이 없으면 모든 사용자를 같은 사람으로 봐서 Rate Limit이 전체에 걸려요.
-  if (config.isProd) app.set('trust proxy', 1);
+  if (config.isProd || config.trustProxy) app.set('trust proxy', 1);
 
   // 보안 헤더 (9강 helmet). Bootstrap과 글꼴은 jsdelivr CDN에서 받아요.
   app.use(
@@ -44,7 +45,8 @@ function createApp() {
     message: { error: '지금 사용자가 많아요. 잠시 후 다시 해 주세요' },
   });
 
-  app.get('/api/health', (req, res) => res.json({ ok: true }));
+  // demo: 임시 DB로 돌아가는 시연용 서버인지. 로그인 화면이 '데모로 둘러보기' 버튼을 보여 줄지 정해요.
+  app.get('/api/health', (req, res) => res.json({ ok: true, demo: isMemoryDb() }));
   app.use('/api/auth', require('./routes/auth'));
   app.use('/api/categories', require('./routes/categories'));
   app.use('/api/accounts', requireAuth, require('./routes/accounts'));

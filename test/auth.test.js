@@ -21,6 +21,13 @@ after(async () => {
   await mongo.stop();
 });
 
+test('진짜 DB 서버에서는 데모 로그인이 없다', async () => {
+  const health = await (await call('GET', '/api/health')).json();
+  assert.equal(health.demo, false);
+  const res = await call('POST', '/api/auth/demo');
+  assert.equal(res.status, 404);
+});
+
 function call(method, path, { body, token } = {}) {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';
