@@ -1,0 +1,22 @@
+# 목업 시연용 무료 배포 (Render). 순서는 docs/DEPLOY.md 맨 위.
+# 임시 메모리 DB로 돌아가서, 서버가 다시 켜지면 연습 계정과 예시 데이터로 처음부터 시작해요.
+# 발표용 진짜 배포는 Cloud Run + Atlas예요.
+services:
+  - type: web
+    name: sur-vibe-demo
+    runtime: node
+    plan: free
+    region: singapore
+    # 임시 DB 프로그램을 미리 내려받아 두면 서버가 켜지는 시간이 줄어요.
+    buildCommand: npm ci --include=dev && node -e "require('mongodb-memory-server-core').MongoBinary.getPath().then((p) => console.log('MongoDB 준비', p))"
+    startCommand: node src/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "1"
+      - key: MONGOMS_DOWNLOAD_DIR
+        value: /opt/render/project/src/.mongodb-binaries

@@ -11,6 +11,8 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || (isProd ? '' : 'dev-only-secret-change-me'),
   anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
   anthropicModel: process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5',
+  // Render 같은 곳은 앞단 서버를 거쳐 들어와요. 그래야 사람마다 IP를 제대로 알아요.
+  trustProxy: process.env.TRUST_PROXY === '1',
 };
 
 if (isProd && !config.jwtSecret) {

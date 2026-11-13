@@ -5,6 +5,8 @@ const rateLimit = require('express-rate-limit');
 const { User } = require('../models');
 const { signToken, requireAuth } = require('../middleware/auth');
 const { HttpError } = require('../utils/httpError');
+const { isMemoryDb } = require('../db');
+const { DEMO_USERNAME } = require('../devSeed');
 
 const router = express.Router();
 
@@ -50,6 +52,13 @@ router.post('/login', loginIpLimiter, loginAttemptLimiter, async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     throw new HttpError(401, '아이디 또는 비밀번호가 틀렸어요');
   }
+  res.json({ token: signToken(user), username: user.username });
+});
+
+// 시연용 서버(임시 DB)에서만 연습 계정으로 바로 들어가요. Atlas를 쓰는 진짜 서버에서는 없는 주소예요.
+router.post('/demo', loginIpLimiter, async (req, res) => {
+  const user = isMemoryDb() ? await User.findOne({ username: DEMO_USERNAME }) : null;
+  if (!user) throw new HttpError(404, '없는 주소예요');
   res.json({ token: signToken(user), username: user.username });
 });
 
