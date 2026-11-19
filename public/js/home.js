@@ -22,6 +22,18 @@ const line = (label, value) => el('div', { class: 'receipt-line' },
   el('span', { class: 'text-muted' }, label),
   el('strong', {}, value));
 
+// 예산을 안 정함 / 이번 달 예산을 다 씀 / 평소 경고 문구
+function budgetNotice(s, ui, left) {
+  if (s.monthlyBudget <= 0) {
+    return el('p', { class: 'small text-muted mb-3' },
+      '아직 월 예산을 정하지 않았어요. ', el('a', { href: '/settings.html' }, '설정에서 정하기'));
+  }
+  if (s.dailyAllowance === 0 && s.level === 'ok') {
+    return el('div', { class: 'alert alert-warning py-2 mb-3' }, '이번 달 예산을 다 썼어요. 남은 날은 꼭 필요한 데만 써요.');
+  }
+  return el('div', { class: `alert ${ui.alert} py-2 mb-3` }, ui.text(left));
+}
+
 function heroCard(s) {
   const ui = LEVEL_UI[s.level] || LEVEL_UI.ok;
   const left = Math.max(0, s.dailyAllowance - s.spentToday);
@@ -31,10 +43,7 @@ function heroCard(s) {
   const bar = el('div', { class: `progress-bar ${ui.bar}`, role: 'progressbar', 'aria-label': '오늘 예산 사용률', 'aria-valuenow': percent, 'aria-valuemin': 0, 'aria-valuemax': 100 });
   bar.style.width = `${percent}%`;
 
-  const notice = s.monthlyBudget > 0
-    ? el('div', { class: `alert ${ui.alert} py-2 mb-3` }, ui.text(left))
-    : el('p', { class: 'small text-muted mb-3' },
-      '아직 월 예산을 정하지 않았어요. ', el('a', { href: '/settings.html' }, '설정에서 정하기'));
+  const notice = budgetNotice(s, ui, left);
 
   return el('div', { class: 'card receipt p-4 mb-3' },
     cardTitle(`${prettyDate(s.date)} 오늘 쓸 수 있는 돈`),
