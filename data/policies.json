@@ -1,1 +1,177 @@
-[]
+[
+  {
+    "category": "교통",
+    "type": "policy",
+    "title": "K-패스 (모두의 카드)",
+    "description": "한 달에 대중교통을 15번 이상 타면 교통비 일부를 돌려받아요. 19~34세 청년은 30%예요.",
+    "url": "https://korea-pass.kr/"
+  },
+  {
+    "category": "교통",
+    "type": "policy",
+    "title": "The 경기패스",
+    "description": "경기도민은 K-패스 청년 혜택을 39세까지 받고, 하루 이용 횟수 제한 없이 환급받아요.",
+    "url": "https://www.gg.go.kr/bbs/boardView.do?bIdx=119939976&bsIdx=838&menuId=1534"
+  },
+  {
+    "category": "교통",
+    "type": "tip",
+    "title": "가까운 거리는 걷거나 공유자전거 타기",
+    "description": "한두 정거장 거리는 걷거나 자전거를 타면 교통비가 줄어요.",
+    "url": ""
+  },
+  {
+    "category": "학식",
+    "type": "policy",
+    "title": "천원의 아침밥",
+    "description": "참여 대학 학생식당에서 아침밥을 1,000원에 먹을 수 있어요.",
+    "url": "https://youth.gg.go.kr/gg/intro/youth-policy-housing-test.do?articleNo=8984&mode=view"
+  },
+  {
+    "category": "학식",
+    "type": "tip",
+    "title": "식권 묶음으로 사기",
+    "description": "학교 식당 식권을 여러 장 한 번에 사면 한 끼 값이 내려가는지 확인해 보세요.",
+    "url": ""
+  },
+  {
+    "category": "외식",
+    "type": "policy",
+    "title": "경기도 청년기본소득",
+    "description": "경기도에 사는 24세 청년은 분기마다 25만 원(1년 최대 100만 원)을 지역화폐로 받아 동네 식당에서 쓸 수 있어요.",
+    "url": "https://www.gg.go.kr/contents/contents.do?ciIdx=1037&menuId=2736"
+  },
+  {
+    "category": "외식",
+    "type": "tip",
+    "title": "점심은 학식으로 바꾸기",
+    "description": "외식 한 번을 학식으로 바꾸면 한 끼에 몇천 원씩 아낄 수 있어요.",
+    "url": ""
+  },
+  {
+    "category": "배달",
+    "type": "policy",
+    "title": "경기도 공공배달앱 (배달특급·땡겨요)",
+    "description": "수수료가 낮은 공공배달앱에서 지역화폐로 결제하면 할인을 받을 수 있어요.",
+    "url": "https://www.gg.go.kr/contents/contents.do?ciIdx=987217&menuId=1534031"
+  },
+  {
+    "category": "배달",
+    "type": "tip",
+    "title": "배달 대신 포장 주문하기",
+    "description": "같은 가게라도 포장으로 시키면 배달비가 안 들어요.",
+    "url": ""
+  },
+  {
+    "category": "배달",
+    "type": "tip",
+    "title": "친구와 같이 시키기",
+    "description": "여럿이 한 번에 주문하면 배달비를 나눠 낼 수 있어요.",
+    "url": ""
+  },
+  {
+    "category": "생활",
+    "type": "policy",
+    "title": "청년월세 지원",
+    "description": "부모님과 따로 사는 19~34세 무주택 청년에게 월세를 월 최대 20만 원, 최대 24개월 지원해요.",
+    "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004661"
+  },
+  {
+    "category": "생활",
+    "type": "policy",
+    "title": "청년 주거급여 분리지급",
+    "description": "주거급여를 받는 집의 19~29세 자녀가 따로 살면 주거급여를 따로 받을 수 있어요.",
+    "url": "https://m.myhome.go.kr/hws/mbl/cont/selectYouthPolicyYouthHousingView.do"
+  },
+  {
+    "category": "생활",
+    "type": "tip",
+    "title": "알뜰폰 요금제로 바꾸기",
+    "description": "통신비가 많이 나오면 같은 데이터의 알뜰폰 요금제로 바꿔 보세요.",
+    "url": ""
+  },
+  {
+    "category": "문화·여가",
+    "type": "policy",
+    "title": "청년문화예술패스",
+    "description": "19~20세 청년에게 공연·전시·영화·책에 쓸 수 있는 포인트를 최대 20만 원(수도권 15만 원) 줘요.",
+    "url": "https://www.mcst.go.kr/html/pop/popCardNews.jsp?pMenuCD=0808010000&pSeq=5"
+  },
+  {
+    "category": "문화·여가",
+    "type": "policy",
+    "title": "문화가 있는 날",
+    "description": "매주 수요일 박물관·공연 등이 할인되거나 무료이고, 매달 둘째·마지막 수요일 저녁에는 영화가 1만 원이에요.",
+    "url": "https://www.culture.go.kr/local/wday/cltrDay.do"
+  },
+  {
+    "category": "문화·여가",
+    "type": "policy",
+    "title": "문화누리카드",
+    "description": "기초생활수급자·차상위 계층에게 문화·여행·체육에 쓸 수 있는 돈을 1년에 15만 원 줘요.",
+    "url": "https://www.mnuri.kr/munhwa/introduceNuri.do"
+  },
+  {
+    "category": "문화·여가",
+    "type": "tip",
+    "title": "학생 할인 챙기기",
+    "description": "영화관, 전시, 공연은 학생증을 보여 주면 할인되는 곳이 많아요.",
+    "url": ""
+  },
+  {
+    "category": "학업",
+    "type": "policy",
+    "title": "국가장학금",
+    "description": "가구 소득에 따라 등록금을 지원해요. 2027년 1학기 1차 신청은 2026년 11월 24일부터예요.",
+    "url": "https://www.kosaf.go.kr/ko/scholar.do?pg=scholarship05_12_01_01"
+  },
+  {
+    "category": "학업",
+    "type": "policy",
+    "title": "국가근로장학금",
+    "description": "학교 안팎에서 일하고 시급(교내 10,320원)을 장학금으로 받아요.",
+    "url": "https://www.kosaf.go.kr/ko/scholar.do?pg=scholarship05_04_01"
+  },
+  {
+    "category": "학업",
+    "type": "tip",
+    "title": "교재는 도서관이나 중고로",
+    "description": "전공책은 도서관에서 빌리거나 선배 중고책을 사면 많이 아껴요.",
+    "url": ""
+  },
+  {
+    "category": "카페",
+    "type": "tip",
+    "title": "텀블러 가져가기",
+    "description": "텀블러를 쓰면 할인해 주는 카페가 많아요.",
+    "url": ""
+  },
+  {
+    "category": "편의점",
+    "type": "tip",
+    "title": "편의점 1+1·2+1 행사 활용",
+    "description": "자주 사는 음료나 간식은 행사 상품으로 바꾸면 한 개 값이 내려가요.",
+    "url": ""
+  },
+  {
+    "category": "구독",
+    "type": "tip",
+    "title": "안 보는 구독 정리하기",
+    "description": "한 달 동안 안 쓴 구독은 해지하고, 필요하면 그때 다시 가입해요.",
+    "url": ""
+  },
+  {
+    "category": "쇼핑",
+    "type": "tip",
+    "title": "장바구니에 하루 두기",
+    "description": "사고 싶은 물건은 장바구니에 넣고 하루 뒤에 다시 보면 충동구매가 줄어요.",
+    "url": ""
+  },
+  {
+    "category": "술·모임",
+    "type": "tip",
+    "title": "모임 예산 미리 정하기",
+    "description": "모임 전에 쓸 돈을 정해 두면 2차, 3차로 늘어나는 걸 막을 수 있어요.",
+    "url": ""
+  }
+]
