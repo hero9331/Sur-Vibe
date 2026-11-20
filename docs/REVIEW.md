@@ -54,9 +54,10 @@ AI가 쓴 코드는 작성자가 줄마다 설명할 수 있어야 해요. 하�
 
 ## 합치는 방법
 
-PR 페이지에서 **Add your review → Approve** 후 **Merge pull request**를 눌러요.
+**1학년 PR:** 짝의 댓글을 확인하고, PR 페이지에서 **Add your review → Approve** 후 **Merge pull request**를 눌러요.
 
-내가 만든 PR은 스스로 승인할 수 없어요. 1학년에게 승인을 받거나, 체크 항목을 직접 확인한 뒤 **Merge without waiting for requirements to be met**으로 합쳐요.
+**팀장 PR (내 PR):** 자동 검사가 모두 초록색이면 **Merge without waiting for requirements to be met**으로 바로 합쳐요. 우리 팀 규칙이에요(`CONTRIBUTING.md`). 검사가 빨간색이면 합치지 않아요.
+
 
 ## 합친 뒤
 
