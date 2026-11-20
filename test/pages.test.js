@@ -21,6 +21,12 @@ test('없는 화면 주소는 안내 페이지를 404로 보여 준다', async (
   assert.match(await res.text(), /페이지를 찾을 수 없어요/);
 });
 
+test('DB가 연결되지 않으면 헬스체크가 503을 준다', async () => {
+  const res = await fetch(`${baseUrl}/api/health`);
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).db, 'disconnected');
+});
+
 test('없는 API 주소는 계속 JSON으로 답한다', async () => {
   const res = await fetch(`${baseUrl}/api/nothing-here`);
   assert.equal(res.status, 404);

@@ -11,6 +11,8 @@ services:
     buildCommand: npm ci --include=dev && node -e "require('mongodb-memory-server-core').MongoBinary.getPath().then((p) => console.log('MongoDB 준비', p))"
     startCommand: node src/server.js
     healthCheckPath: /api/health
+    # 자동 검사(GitHub Actions)를 통과한 커밋만 배포해요. 검사가 실패하면 배포가 멈춰요. (12강 CI/CD)
+    autoDeployTrigger: checksPass
     envVars:
       - key: NODE_VERSION
         value: "22"

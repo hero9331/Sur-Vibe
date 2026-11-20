@@ -30,6 +30,8 @@ npm test
 |---|---|
 | `find`, `findOne`, `update`, `delete`에 `user: req.userId`가 없음 | 남의 가계부가 보여요 |
 | `findById(req.params.id)`로 바로 찾음 | 다른 사람 id를 넣으면 남의 데이터를 고쳐요 |
+| `req.body` 값을 검사 없이 그대로 DB 조건에 넣음 | `{"$ne": null}` 같은 값으로 조건을 우회할 수 있어요 (OWASP 인젝션) |
+| 처음 보는 패키지를 설치 | AI가 지어낸 이름이면 같은 이름의 악성 패키지일 수 있어요 |
 | `innerHTML`에 사용자 입력을 넣음 | 스크립트 공격(XSS)이 돼요 |
 | `req.body`를 그대로 저장 | 금액이나 작성자를 조작할 수 있어요 |
 | `package.json`에 새 패키지 | 물어보기로 했어요 |

@@ -14,9 +14,21 @@
 
 7강에서 배운 **Cloud Run**에 올려요. 캡처를 여러 장 올려야 해서 요청 크기 제한이 작은 Vercel은 맞지 않아요.
 
+## 환경 단계 (12강)
+
+| 단계 | 어디 | DB | 누가 써요 |
+|---|---|---|---|
+| 개발 | 각자 노트북 (`npm run dev`) | 임시 메모리 DB | 개발하는 사람 |
+| 데모 (스테이징) | Render `sur-vibe-demo` | 임시 메모리 DB | 팀원, 시연 연습 |
+| 운영 | 발표용 배포 | MongoDB Atlas | 발표, 실제 사용 |
+
+- Render는 자동 검사를 통과한 커밋만 배포해요. 검사가 실패하면 배포가 멈춰요. (12강 CI/CD)
+- Render에서 새 배포가 고장 나면 대시보드의 **Events**에서 이전 배포의 **Rollback**을 눌러 되돌려요.
+- 운영 배포는 7강의 Cloud Run 또는 12강의 Render + Atlas 중에서 골라요. Render는 카드 등록 없이 무료로 쓸 수 있어요.
+
 ## 1. MongoDB Atlas
 1. https://account.mongodb.com 에서 무료 클러스터(M0)를 만들어요. (7강)
-2. Database Access에서 사용자를 만들어요.
+2. Database Access에서 앱 전용 사용자를 만들어요. 권한은 관리자 말고 **readWrite**만 줘요. (12강 최소 권한)
 3. Network Access에 `0.0.0.0/0`을 추가해요. Cloud Run은 주소가 고정되지 않아요.
 4. Connect → Drivers에서 주소를 복사해요. `mongodb+srv://...` 뒤에 DB 이름 `budget`을 넣어요.
 
