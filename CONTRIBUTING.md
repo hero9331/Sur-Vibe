@@ -127,3 +127,4 @@ git rm --cached .env
 | GitHub 아이디 | 날짜 |
 |---|---|
 | hero9331 | 2026-11-11 |
+| joyeonsu-p | 2026-11-18 |
