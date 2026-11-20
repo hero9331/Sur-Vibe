@@ -26,7 +26,7 @@ test('연습 계정으로 로그인할 수 있고 계좌, 설정, 거래가 들�
   await seedDemoData('2026-11-15');
   const user = await User.findOne({ username: DEMO_USERNAME });
   assert.equal(await bcrypt.compare(DEMO_PASSWORD, user.passwordHash), true);
-  assert.equal(await Account.countDocuments({ user: user.id }), 2);
+  assert.equal(await Account.countDocuments({ user: user.id }), 4); // 은행 2 + 페이머니 1 + 카드 1 (설정 화면 시연용, 1학년 A)
   assert.equal((await Setting.findOne({ user: user.id })).monthlyBudget, 500000);
   assert.ok(await Transaction.countDocuments({ user: user.id, date: /^2026-11-/ }) > 0);
   assert.ok(await Transaction.countDocuments({ user: user.id, date: /^2026-10-/ }) > 0);
