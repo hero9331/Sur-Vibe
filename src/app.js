@@ -1,11 +1,13 @@
 const path = require('path');
 const express = require('express');
+const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const config = require('./config');
 const { isMemoryDb } = require('./db');
 const { requireAuth } = require('./middleware/auth');
 const { notFound, errorHandler } = require('./middleware/error');
+const { requestLog } = require('./middleware/requestLog');
 
 function createApp() {
   const app = express();
@@ -31,6 +33,8 @@ function createApp() {
     }),
   );
   app.use(express.json({ limit: '1mb' }));
+  // 자동 시험 중에는 기록을 남기지 않아요. (시험 결과가 읽기 어려워져서)
+  if (!process.env.NODE_TEST_CONTEXT) app.use(requestLog);
 
   // 캡처 읽기는 AI 요금이 나가서 사람마다, 그리고 앱 전체로 횟수를 제한해요. (9강 Rate Limiting)
   const hourlyLimit = (options) => rateLimit({ windowMs: 60 * 60 * 1000, standardHeaders: 'draft-8', legacyHeaders: false, ...options });
@@ -46,7 +50,11 @@ function createApp() {
   });
 
   // demo: 임시 DB로 돌아가는 시연용 서버인지. 로그인 화면이 '데모로 둘러보기' 버튼을 보여 줄지 정해요.
-  app.get('/api/health', (req, res) => res.json({ ok: true, demo: isMemoryDb() }));
+  // 서버와 DB가 살아 있는지 확인해요. DB가 끊기면 503이라 배포 플랫폼이 이상을 알아채요. (12강 헬스체크)
+  app.get('/api/health', (req, res) => {
+    const dbConnected = mongoose.connection.readyState === 1;
+    res.status(dbConnected ? 200 : 503).json({ ok: dbConnected, db: dbConnected ? 'connected' : 'disconnected', demo: isMemoryDb() });
+  });
   app.use('/api/auth', require('./routes/auth'));
   app.use('/api/categories', require('./routes/categories'));
   app.use('/api/accounts', requireAuth, require('./routes/accounts'));

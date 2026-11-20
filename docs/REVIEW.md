@@ -30,6 +30,8 @@ npm test
 |---|---|
 | `find`, `findOne`, `update`, `delete`에 `user: req.userId`가 없음 | 남의 가계부가 보여요 |
 | `findById(req.params.id)`로 바로 찾음 | 다른 사람 id를 넣으면 남의 데이터를 고쳐요 |
+| `req.body` 값을 검사 없이 그대로 DB 조건에 넣음 | `{"$ne": null}` 같은 값으로 조건을 우회할 수 있어요 (OWASP 인젝션) |
+| 처음 보는 패키지를 설치 | AI가 지어낸 이름이면 같은 이름의 악성 패키지일 수 있어요 |
 | `innerHTML`에 사용자 입력을 넣음 | 스크립트 공격(XSS)이 돼요 |
 | `req.body`를 그대로 저장 | 금액이나 작성자를 조작할 수 있어요 |
 | `package.json`에 새 패키지 | 물어보기로 했어요 |
@@ -52,9 +54,10 @@ AI가 쓴 코드는 작성자가 줄마다 설명할 수 있어야 해요. 하�
 
 ## 합치는 방법
 
-PR 페이지에서 **Add your review → Approve** 후 **Merge pull request**를 눌러요.
+**1학년 PR:** 짝의 댓글을 확인하고, PR 페이지에서 **Add your review → Approve** 후 **Merge pull request**를 눌러요.
 
-내가 만든 PR은 스스로 승인할 수 없어요. 1학년에게 승인을 받거나, 체크 항목을 직접 확인한 뒤 **Merge without waiting for requirements to be met**으로 합쳐요.
+**팀장 PR (내 PR):** 자동 검사가 모두 초록색이면 **Merge without waiting for requirements to be met**으로 바로 합쳐요. 우리 팀 규칙이에요(`CONTRIBUTING.md`). 검사가 빨간색이면 합치지 않아요.
+
 
 ## 합친 뒤
 
