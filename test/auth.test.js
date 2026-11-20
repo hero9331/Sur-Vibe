@@ -24,6 +24,7 @@ after(async () => {
 test('진짜 DB 서버에서는 데모 로그인이 없다', async () => {
   const health = await (await call('GET', '/api/health')).json();
   assert.equal(health.demo, false);
+  assert.equal(health.db, 'connected');
   const res = await call('POST', '/api/auth/demo');
   assert.equal(res.status, 404);
 });
