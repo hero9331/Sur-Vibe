@@ -1,28 +1,14 @@
 // F5 월별 보기 — 담당: 1학년 C (monthly-section 안만 고쳐요)
 // 설명서: docs/guides/C-summary.md
-// 지금은 mock.js 예시 데이터예요. GET /api/summary/monthly를 만들면 api()로 바꾸세요.
-import { won } from './api.js';
-import { el, mockBadge, cardTitle } from './ui.js';
-import { mockPrevMonth, mockTransactions } from './mock.js';
+// GET /api/summary/monthly로 이번 달 카테고리별 지출과 지난달 비교를 불러와요.
+import { api, won } from './api.js';
+import { el, cardTitle } from './ui.js';
 
-function summarize() {
-  const totals = {};
-  for (const t of mockTransactions) {
-    if (!t.isExpense) continue;
-    totals[t.category] = (totals[t.category] || 0) + t.amount;
-  }
-  const categories = new Set([...Object.keys(totals), ...Object.keys(mockPrevMonth)]);
-  const byCategory = [...categories]
-    .map((category) => {
-      const amount = totals[category] || 0;
-      const prevAmount = mockPrevMonth[category] || 0;
-      return { category, amount, prevAmount, diff: amount - prevAmount };
-    })
-    .filter((c) => c.amount > 0)
-    .sort((a, b) => b.amount - a.amount);
-  const total = byCategory.reduce((s, c) => s + c.amount, 0);
-  const prevTotal = Object.values(mockPrevMonth).reduce((s, v) => s + v, 0);
-  return { total, prevTotal, byCategory };
+const section = document.getElementById('monthly-section');
+
+// 한국 시간 기준 오늘 "2026-11-19"
+function kstToday() {
+  return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(new Date());
 }
 
 function diffText(diff) {
@@ -31,12 +17,10 @@ function diffText(diff) {
   return el('span', { class: 'text-muted' }, '변화 없음');
 }
 
-function render() {
-  const s = summarize();
-  const max = Math.max(...s.byCategory.map((c) => c.amount));
-
-  // 카테고리별 가로 막대 (한 가지 색, 금액이 큰 순서)
-  const bars = s.byCategory.map((c) => {
+// 카테고리별 가로 막대 (한 가지 색, 금액이 큰 순서)
+function barChart(byCategory) {
+  const max = Math.max(...byCategory.map((c) => c.amount));
+  const bars = byCategory.map((c) => {
     const fill = el('div', { class: 'bar-fill' });
     fill.style.width = `${(c.amount / max) * 100}%`;
     return el('div', { class: 'bar-row', role: 'listitem', title: `${c.category} ${won(c.amount)} (지난달 ${won(c.prevAmount)})` },
@@ -44,22 +28,45 @@ function render() {
       el('div', { class: 'bar-track' }, fill),
       el('div', { class: 'bar-value' }, won(c.amount), el('div', { class: 'small' }, diffText(c.diff))));
   });
+  return el('div', { class: 'bar-chart', role: 'list', 'aria-label': '카테고리별 지출' }, bars);
+}
 
-  const totalDiff = s.total - s.prevTotal;
-  const header = el('div', { class: 'd-flex justify-content-between align-items-end mb-3' },
+function totalHeader(s, today) {
+  const [, mon, day] = today.split('-').map(Number);
+  return el('div', { class: 'd-flex justify-content-between align-items-end mb-3' },
     el('div', {},
-      el('div', { class: 'small text-muted' }, '이번 달 지출 (11월 6일까지)'),
+      el('div', { class: 'small text-muted' }, `이번 달 지출 (${mon}월 ${day}일까지)`),
       el('div', { class: 'fs-3 fw-bold' }, won(s.total))),
     el('div', { class: 'text-end small' },
       el('div', { class: 'text-muted' }, `지난달 ${won(s.prevTotal)}`),
-      diffText(totalDiff)));
+      diffText(s.total - s.prevTotal)));
+}
 
-  document.getElementById('monthly-section').replaceChildren(
-    el('div', { class: 'card p-4' },
-      cardTitle('2026년 11월 카테고리별 지출', mockBadge()),
-      header,
-      el('div', { class: 'bar-chart', role: 'list', 'aria-label': '카테고리별 지출' }, bars),
-      el('p', { class: 'small text-muted mt-3 mb-0' }, '▲ 지난달보다 늘어남 · ▼ 지난달보다 줄어듦')));
+function monthlyCard(s, today) {
+  const [year, mon] = s.month.split('-').map(Number);
+  const title = cardTitle(`${year}년 ${mon}월 카테고리별 지출`);
+
+  if (s.byCategory.length === 0) {
+    return el('div', { class: 'card p-4' }, title,
+      el('p', { class: 'text-muted mb-0' }, '아직 내역이 없어요. 결제내역 캡처를 올리면 여기에 그래프가 생겨요.'));
+  }
+  return el('div', { class: 'card p-4' },
+    title,
+    totalHeader(s, today),
+    barChart(s.byCategory),
+    el('p', { class: 'small text-muted mt-3 mb-0' }, '▲ 지난달보다 늘어남 · ▼ 지난달보다 줄어듦'));
+}
+
+async function render() {
+  section.replaceChildren(el('p', { class: 'text-muted' }, '불러오는 중이에요...'));
+  const today = kstToday();
+  try {
+    const summary = await api('GET', `/api/summary/monthly?month=${today.slice(0, 7)}`);
+    section.replaceChildren(monthlyCard(summary, today));
+  } catch (err) {
+    section.replaceChildren(el('div', { class: 'alert alert-danger' },
+      `월별 지출을 불러오지 못했어요. 잠시 뒤 새로고침해 주세요. (${err.message})`));
+  }
 }
 
 render();
