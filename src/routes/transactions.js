@@ -1,14 +1,113 @@
 // F3 거래 내역 — 담당: 1학년 B
-// 설명서: docs/guides/B-transactions.md / API 형식: docs/API.md
-// 카테고리를 고치면 services/rules.js의 learnRule()을 꼭 불러 주세요.
 const express = require('express');
-const { notImplemented } = require('../utils/httpError');
+const { isObjectIdOrHexString } = require('mongoose');
+const { Transaction } = require('../models');
+const { CATEGORY_NAMES } = require('../categories');
+const { learnRule } = require('../services/rules');
+const { HttpError } = require('../utils/httpError');
 
 const router = express.Router();
+const editable = ['date', 'merchant', 'amount', 'category', 'isExpense'];
+const batchFields = [...editable, 'originalAmount', 'splitCount', 'accountId', 'source'];
 
-router.get('/', notImplemented);
-router.post('/', notImplemented);
-router.patch('/:id', notImplemented);
-router.delete('/:id', notImplemented);
+function fields(input, allowed) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw new HttpError(400, '거래 정보를 확인해 주세요');
+  }
+  return Object.fromEntries(allowed.filter((key) => Object.hasOwn(input, key)).map((key) => [key, input[key]]));
+}
+
+function validDate(date) {
+  return typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)
+    && Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0, 10) === date;
+}
+
+const validators = {
+  date: validDate,
+  merchant: (value) => typeof value === 'string',
+  amount: (value) => Number.isFinite(value) && value > 0,
+  originalAmount: (value) => Number.isFinite(value) && value >= 0,
+  category: (value) => CATEGORY_NAMES.includes(value),
+  isExpense: (value) => typeof value === 'boolean',
+  splitCount: (value) => Number.isInteger(value) && value >= 1,
+  accountId: (value) => value === null || isObjectIdOrHexString(value),
+  source: (value) => ['scan', 'manual'].includes(value),
+};
+
+function validate(values) {
+  for (const [key, value] of Object.entries(values)) {
+    if (!validators[key](value)) throw new HttpError(400, '거래 정보를 확인해 주세요');
+  }
+}
+
+function serialize(transaction) {
+  const { _id, ...values } = transaction.toObject();
+  return { id: String(_id), ...fields(values, batchFields) };
+}
+
+function ownedTransaction(req) {
+  if (!isObjectIdOrHexString(req.params.id)) throw new HttpError(404, '거래를 찾을 수 없어요');
+  return { _id: req.params.id, user: req.userId };
+}
+
+async function validateDocument(transaction) {
+  try {
+    await transaction.validate();
+  } catch (error) {
+    if (error.name !== 'ValidationError') throw error;
+    throw new HttpError(400, Object.values(error.errors)[0].message);
+  }
+}
+
+router.get('/', async (req, res) => {
+  const { month } = req.query;
+  if (typeof month !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+    throw new HttpError(400, '달을 YYYY-MM 형식으로 입력해 주세요');
+  }
+  const items = await Transaction.find({ user: req.userId, date: { $regex: `^${month}-` } }).sort({ date: -1, _id: -1 });
+  res.json(items.map(serialize));
+});
+
+router.post('/', async (req, res) => {
+  const { items } = req.body ?? {};
+  if (!Array.isArray(items) || !items.length) throw new HttpError(400, '저장할 거래가 필요해요');
+
+  const documents = items.map((item) => {
+    const values = fields(item, batchFields);
+    validate(values);
+    if (Object.hasOwn(item, 'categoryEdited') && typeof item.categoryEdited !== 'boolean') {
+      throw new HttpError(400, '카테고리 수정 여부를 확인해 주세요');
+    }
+    return new Transaction({ ...values, user: req.userId });
+  });
+  await Promise.all(documents.map(validateDocument));
+  const saved = await Transaction.insertMany(documents);
+  for (const [index, transaction] of saved.entries()) {
+    if (items[index].categoryEdited) await learnRule(req.userId, transaction.merchant, transaction.category);
+  }
+  res.status(201).json({ saved: saved.length, items: saved.map(serialize) });
+});
+
+router.patch('/:id', async (req, res) => {
+  const filter = ownedTransaction(req);
+  const values = fields(req.body, editable);
+  validate(values);
+  const previous = await Transaction.findOne(filter);
+  if (!previous) throw new HttpError(404, '거래를 찾을 수 없어요');
+  previous.set(values);
+  await validateDocument(previous);
+  const updated = Object.keys(values).length
+    ? await Transaction.findOneAndUpdate(filter, { $set: values }, { returnDocument: 'after' })
+    : previous;
+  if (!updated) throw new HttpError(404, '거래를 찾을 수 없어요');
+  if (Object.hasOwn(values, 'category')) await learnRule(req.userId, updated.merchant, updated.category);
+  res.json(serialize(updated));
+});
+
+router.delete('/:id', async (req, res) => {
+  const { deletedCount } = await Transaction.deleteOne(ownedTransaction(req));
+  if (!deletedCount) throw new HttpError(404, '거래를 찾을 수 없어요');
+  res.sendStatus(204);
+});
 
 module.exports = router;
