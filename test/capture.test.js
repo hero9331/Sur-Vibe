@@ -46,3 +46,69 @@ test('저장된 건수만큼만 표시한다 (같은 날 지하철을 또 탄 �
   );
   assert.deepEqual(result.map((x) => x.maybeDuplicate === true), [true, false]);
 });
+
+// prepareCapture 시험: 브라우저의 사진 열기·캔버스를 가짜로 바꿔요.
+let prepareCapture;
+let MAX_FILE_SIZE;
+let closed;
+let qualities;
+
+function fakeBrowser({ width, height, blobSizes = [], cannotOpen = false }) {
+  closed = 0;
+  qualities = [];
+  globalThis.createImageBitmap = async () => {
+    if (cannotOpen) throw new Error('not an image');
+    return { width, height, close: () => { closed += 1; } };
+  };
+  globalThis.document = {
+    createElement: () => ({
+      getContext: () => ({ drawImage: () => {} }),
+      toBlob(callback, type, quality) {
+        qualities.push(quality);
+        const size = blobSizes.shift();
+        callback(size === null ? null : new Blob([new Uint8Array(size)], { type }));
+      },
+    }),
+  };
+}
+
+const photo = (size, name = 'shot.png') => new File([new Uint8Array(size)], name, { type: 'image/png' });
+
+test.before(async () => {
+  ({ prepareCapture, MAX_FILE_SIZE } = await import('../public/js/capture.js'));
+});
+
+test('작고 보통 크기인 캡처는 그대로 보낸다', async () => {
+  fakeBrowser({ width: 1080, height: 2400 });
+  const file = photo(1000);
+  assert.equal(await prepareCapture(file), file);
+  assert.equal(closed, 1);
+});
+
+test('브라우저가 못 여는 파일은 서버 검사에 맡기고 그대로 보낸다', async () => {
+  fakeBrowser({ width: 0, height: 0, cannotOpen: true });
+  const file = photo(10);
+  assert.equal(await prepareCapture(file), file);
+});
+
+test('긴 캡처는 줄여서 jpg로 바꾼다', async () => {
+  fakeBrowser({ width: 1080, height: 15800, blobSizes: [2000] });
+  const result = await prepareCapture(photo(1000, '긴캡처.png'));
+  assert.equal(result.name, '긴캡처.jpg');
+  assert.equal(result.type, 'image/jpeg');
+  assert.deepEqual(qualities, [0.9]);
+  assert.equal(closed, 1);
+});
+
+test('무거운 캡처는 jpg로 줄이고, 그래도 크면 화질을 한 번 더 낮춘다', async () => {
+  fakeBrowser({ width: 1080, height: 2400, blobSizes: [MAX_FILE_SIZE + 1, 3000] });
+  const result = await prepareCapture(photo(MAX_FILE_SIZE + 1));
+  assert.equal(result.size, 3000);
+  assert.deepEqual(qualities, [0.9, 0.7]);
+});
+
+test('jpg로 못 바꾸면 원래 파일을 보낸다', async () => {
+  fakeBrowser({ width: 1080, height: 15800, blobSizes: [null] });
+  const file = photo(1000);
+  assert.equal(await prepareCapture(file), file);
+});
