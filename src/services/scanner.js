@@ -114,22 +114,19 @@ function getClient() {
   return client;
 }
 
+// Claude API 오류 종류 → 사용자에게 보여 줄 응답. 위에서부터 맞는 첫 줄을 써요. (APIError는 나머지를 모두 포함해서 맨 아래)
+const API_ERROR_RESPONSES = [
+  { types: [Anthropic.AuthenticationError, Anthropic.PermissionDeniedError], status: 503, message: 'Claude API 키를 확인해 주세요' },
+  { types: [Anthropic.RateLimitError], status: 429, message: '지금 요청이 많아요. 잠시 후 다시 해 주세요' },
+  { types: [Anthropic.BadRequestError], status: 400, message: '캡처를 AI로 보내지 못했어요. 더 작은 캡처로 하거나 크레딧 잔액을 확인해 주세요' },
+  { types: [Anthropic.APIError], status: 502, message: 'AI가 응답하지 않아요. 잠시 후 다시 해 주세요' },
+];
+
 function toHttpError(error) {
   if (error instanceof HttpError) return error;
   console.error('[scan] Claude API 오류:', error.message);
-  if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) {
-    return new HttpError(503, 'Claude API 키를 확인해 주세요');
-  }
-  if (error instanceof Anthropic.RateLimitError) {
-    return new HttpError(429, '지금 요청이 많아요. 잠시 후 다시 해 주세요');
-  }
-  if (error instanceof Anthropic.BadRequestError) {
-    return new HttpError(400, '캡처를 AI로 보내지 못했어요. 더 작은 캡처로 하거나 크레딧 잔액을 확인해 주세요');
-  }
-  if (error instanceof Anthropic.APIError) {
-    return new HttpError(502, 'AI가 응답하지 않아요. 잠시 후 다시 해 주세요');
-  }
-  return error;
+  const known = API_ERROR_RESPONSES.find(({ types }) => types.some((Type) => error instanceof Type));
+  return known ? new HttpError(known.status, known.message) : error;
 }
 
 function buildRequestText(accounts) {
