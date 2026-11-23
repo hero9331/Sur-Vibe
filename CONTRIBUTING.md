@@ -130,3 +130,4 @@ git rm --cached .env
 | joyeonsu-p | 2026-11-18 |
 | shinhchn | 2026-11-20 |
 | sst-One | 2026-11-23 |
+| chaeyoon0128 | 2026-11-23 |
