@@ -29,6 +29,13 @@ test('진짜 DB 서버에서는 데모 로그인이 없다', async () => {
   assert.equal(res.status, 404);
 });
 
+test('로그인한 API 요청도 사람마다 횟수 제한 정보가 붙는다', async () => {
+  const res = await call('POST', '/api/auth/signup', { body: { username: 'limituser1', password: 'password123' } });
+  const { token } = await res.json();
+  const listed = await call('GET', '/api/transactions?month=2026-11', { token });
+  assert.ok(listed.headers.get('ratelimit-policy'), '횟수 제한 헤더가 있어야 해요');
+});
+
 function call(method, path, { body, token } = {}) {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';

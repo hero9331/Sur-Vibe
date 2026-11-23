@@ -49,6 +49,17 @@ function createApp() {
     message: { error: '지금 사용자가 많아요. 잠시 후 다시 해 주세요' },
   });
 
+  // 로그인한 사람의 API 요청도 사람마다 횟수를 제한해요. 한 사람이 서버를 마비시키지 못하게 해요. (11강 OWASP, CodeQL 경고)
+  // 화면 하나에 요청이 여러 번 가니까 넉넉하게 15분에 600번이에요.
+  const apiUserLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 600,
+    keyGenerator: (req) => req.userId,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: '요청이 너무 많아요. 잠시 후 다시 해 주세요' },
+  });
+
   // demo: 임시 DB로 돌아가는 시연용 서버인지. 로그인 화면이 '데모로 둘러보기' 버튼을 보여 줄지 정해요.
   // 서버와 DB가 살아 있는지 확인해요. DB가 끊기면 503이라 배포 플랫폼이 이상을 알아채요. (12강 헬스체크)
   app.get('/api/health', (req, res) => {
@@ -57,12 +68,12 @@ function createApp() {
   });
   app.use('/api/auth', require('./routes/auth'));
   app.use('/api/categories', require('./routes/categories'));
-  app.use('/api/accounts', requireAuth, require('./routes/accounts'));
-  app.use('/api/settings', requireAuth, require('./routes/settings'));
-  app.use('/api/scans', requireAuth, scanUserLimiter, scanTotalLimiter, require('./routes/scans'));
-  app.use('/api/transactions', requireAuth, require('./routes/transactions'));
-  app.use('/api/summary', requireAuth, require('./routes/summary'));
-  app.use('/api/recommendations', requireAuth, require('./routes/recommendations'));
+  app.use('/api/accounts', requireAuth, apiUserLimiter, require('./routes/accounts'));
+  app.use('/api/settings', requireAuth, apiUserLimiter, require('./routes/settings'));
+  app.use('/api/scans', requireAuth, apiUserLimiter, scanUserLimiter, scanTotalLimiter, require('./routes/scans'));
+  app.use('/api/transactions', requireAuth, apiUserLimiter, require('./routes/transactions'));
+  app.use('/api/summary', requireAuth, apiUserLimiter, require('./routes/summary'));
+  app.use('/api/recommendations', requireAuth, apiUserLimiter, require('./routes/recommendations'));
   app.use('/api', notFound);
 
   // 화면 파일(public 폴더)도 같은 서버에서 보내요. 주소가 같아서 CORS 문제가 없어요.
