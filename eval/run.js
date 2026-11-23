@@ -96,11 +96,8 @@ async function scan(token, folder, images) {
   return data.items;
 }
 
-async function main() {
-  const folder = path.resolve(process.argv[2] || path.join(__dirname, 'samples'));
-  const { cases } = JSON.parse(fs.readFileSync(path.join(folder, 'answers.json'), 'utf8'));
-  const token = await signUp();
-
+// 1단계: 정답지의 캡처를 하나씩 서버로 보내서 읽어요.
+async function readAllCases(token, folder, cases) {
   const results = [];
   for (const item of cases) {
     const started = Date.now();
@@ -108,8 +105,11 @@ async function main() {
     console.log(`읽음: ${item.name} (${actual.length}건, ${((Date.now() - started) / 1000).toFixed(1)}초)`);
     results.push({ name: item.name, expected: item.expected, actual });
   }
+  return results;
+}
 
-  const { score, problems } = scoreCases(results);
+// 2단계: 점수를 표로 보여 줘요.
+function printReport({ score, problems }) {
   console.log('\n결과');
   console.log(`  거래 찾기  ${score.found}/${score.total} (${percent(score.found, score.total)}%)`);
   for (const [field, label] of [['date', '날짜'], ['merchant', '가게'], ['amount', '금액'], ['category', '카테고리']]) {
@@ -124,6 +124,13 @@ async function main() {
 
   const categoryPercent = percent(score.category, score.total);
   console.log(`\n목표 ${GOAL}%: 카테고리 정확도 ${categoryPercent}% → ${categoryPercent >= GOAL ? '통과' : '미달'}`);
+}
+
+async function main() {
+  const folder = path.resolve(process.argv[2] || path.join(__dirname, 'samples'));
+  const { cases } = JSON.parse(fs.readFileSync(path.join(folder, 'answers.json'), 'utf8'));
+  const token = await signUp();
+  printReport(scoreCases(await readAllCases(token, folder, cases)));
 }
 
 if (require.main === module) {
