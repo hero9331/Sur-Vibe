@@ -253,7 +253,8 @@
 }
 ```
 - `dailyAllowance` = (월 예산 − 고정비 합계 − 어제까지 쓴 돈) ÷ 오늘 포함 남은 날짜, 원 단위 버림, 0보다 작으면 0
-- `level`: 오늘 쓴 돈이 `dailyAllowance`의 80% 미만 `"ok"`, 80% 이상 `"warning"`, 100% 이상 `"over"`. 예산을 아직 안 정해서 둘 다 0이면 `"ok"`
+- `level`: 오늘 쓴 돈이 `dailyAllowance`의 80% 미만 `"ok"`, 80% 이상 `"warning"`, 100% 이상 `"over"`. 예산을 아직 안 정해서 둘 다 0이면 `"ok"`, `dailyAllowance`가 0인데 오늘 쓴 돈이 있으면 `"over"`
+- 날짜는 한국 시간(Asia/Seoul) 기준이에요. 설정을 저장한 적 없으면 예산 0, 고정비 없음으로 계산해요
 - 지출(`isExpense: true`)만 더해요
 - 고정비로 등록한 결제는 `spentBeforeToday`, `spentToday`에서 빼요. 예산에서 이미 뺐으니 두 번 계산하지 않아요. `src/services/fixedCosts.js`의 `isFixedCost(merchant, fixedCosts, category)`를 쓰면 돼요. 월별 합계에는 그대로 넣어요
   - 거래의 `category`도 같이 넘겨 주세요. "그 외 교통비"처럼 `wholeCategory`인 고정비는 카테고리로 비교해요
@@ -271,6 +272,7 @@
 }
 ```
 - `byCategory`는 이번 달 지출이 있는 카테고리만, 금액이 큰 순서. 지출만 더해요
+- `month`가 없거나 형식이 틀리면 400. 1월이면 `prevMonth`는 전년 12월이에요
 
 ---
 
