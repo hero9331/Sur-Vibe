@@ -159,19 +159,21 @@ async function requestScan(images, accounts) {
   return getClient().beta.messages.create({ ...params, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' });
 }
 
-// images: [{ mediaType: 'image/png', buffer: Buffer }], accounts: [{ name, institution }]
-async function readCaptures(images, accounts = []) {
-  let response;
-  try {
-    response = await requestScan(images, accounts);
-  } catch (error) {
-    throw toHttpError(error);
-  }
+// 끝까지 답하지 못한 이유 → 사용자에게 보여 줄 문구
+const STOP_REASON_MESSAGES = new Map([
+  ['refusal', '이 캡처는 읽을 수 없어요. 다른 캡처로 해 주세요'],
+  ['max_tokens', '거래가 너무 많아요. 캡처 수를 줄여 주세요'],
+]);
 
-  if (response.stop_reason === 'refusal') throw new HttpError(422, '이 캡처는 읽을 수 없어요. 다른 캡처로 해 주세요');
-  if (response.stop_reason === 'max_tokens') throw new HttpError(422, '거래가 너무 많아요. 캡처 수를 줄여 주세요');
+// 1단계: AI 답이 끝까지 왔는지 확인해요.
+function checkStopReason(response) {
+  const message = STOP_REASON_MESSAGES.get(response.stop_reason);
+  if (message) throw new HttpError(422, message);
+}
 
-  // 다른 모델이 이어서 답하면 앞에 끊긴 글이 남을 수 있어서 마지막 글을 읽어요.
+// 2단계: 답의 글을 JSON으로 읽어 거래 목록을 꺼내요.
+// 다른 모델이 이어서 답하면 앞에 끊긴 글이 남을 수 있어서 마지막 글을 읽어요.
+function parseItems(response) {
   const text = response.content.filter((block) => block.type === 'text').at(-1)?.text;
   let parsed;
   try {
@@ -179,7 +181,16 @@ async function readCaptures(images, accounts = []) {
   } catch {
     throw new HttpError(502, 'AI 답을 이해하지 못했어요. 다시 해 주세요');
   }
-  return normalizeItems(Array.isArray(parsed?.items) ? parsed.items : []);
+  return Array.isArray(parsed?.items) ? parsed.items : [];
+}
+
+// images: [{ mediaType: 'image/png', buffer: Buffer }], accounts: [{ name, institution }]
+async function readCaptures(images, accounts = []) {
+  const response = await requestScan(images, accounts).catch((error) => {
+    throw toHttpError(error);
+  });
+  checkStopReason(response);
+  return normalizeItems(parseItems(response));
 }
 
 module.exports = { readCaptures, normalizeItems, detectImageType };
