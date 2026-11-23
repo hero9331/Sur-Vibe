@@ -59,6 +59,15 @@ async function validateDocument(transaction) {
   }
 }
 
+async function learnSavedCategory(userId, transaction) {
+  try {
+    await learnRule(userId, transaction.merchant, transaction.category);
+  } catch (error) {
+    // 거래는 이미 저장됐으므로 분류 학습 실패가 재저장을 유도하지 않게 해요.
+    console.error('[transactions] 분류 규칙 저장 실패:', error.name);
+  }
+}
+
 router.get('/', async (req, res) => {
   const { month } = req.query;
   if (typeof month !== 'string' || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
@@ -83,7 +92,7 @@ router.post('/', async (req, res) => {
   await Promise.all(documents.map(validateDocument));
   const saved = await Transaction.insertMany(documents);
   for (const [index, transaction] of saved.entries()) {
-    if (items[index].categoryEdited) await learnRule(req.userId, transaction.merchant, transaction.category);
+    if (items[index].categoryEdited) await learnSavedCategory(req.userId, transaction);
   }
   res.status(201).json({ saved: saved.length, items: saved.map(serialize) });
 });
@@ -100,7 +109,7 @@ router.patch('/:id', async (req, res) => {
     ? await Transaction.findOneAndUpdate(filter, { $set: values }, { returnDocument: 'after' })
     : previous;
   if (!updated) throw new HttpError(404, '거래를 찾을 수 없어요');
-  if (Object.hasOwn(values, 'category')) await learnRule(req.userId, updated.merchant, updated.category);
+  if (Object.hasOwn(values, 'category')) await learnSavedCategory(req.userId, updated);
   res.json(serialize(updated));
 });
 
