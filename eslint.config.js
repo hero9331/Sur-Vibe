@@ -13,7 +13,7 @@ module.exports = [
     },
   },
   {
-    files: ['src/**/*.js', 'test/**/*.js', 'eval/**/*.js', 'eslint.config.js'],
+    files: ['src/**/*.js', 'test/**/*.js', 'eval/**/*.js', 'scripts/**/*.js', 'eslint.config.js'],
     languageOptions: { sourceType: 'commonjs', globals: globals.node },
   },
   {
