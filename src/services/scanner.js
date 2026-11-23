@@ -87,12 +87,22 @@ function normalizeItems(rawItems) {
   return rawItems.map(cleanItem).filter(Boolean);
 }
 
+// 이미지 종류마다 파일 앞부분에 꼭 있는 바이트 ([위치, 바이트])
+const IMAGE_SIGNATURES = [
+  { type: 'image/png', parts: [[0, Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])]] },
+  { type: 'image/jpeg', parts: [[0, Buffer.from([0xff, 0xd8, 0xff])]] },
+  { type: 'image/webp', parts: [[0, Buffer.from('RIFF', 'latin1')], [8, Buffer.from('WEBP', 'latin1')]] },
+];
+
+function hasBytesAt(buffer, offset, expected) {
+  const end = offset + expected.length;
+  return buffer.length >= end && buffer.subarray(offset, end).equals(expected);
+}
+
 // 파일 내용의 앞부분을 보고 진짜 이미지인지 확인해요. 브라우저가 보낸 파일 형식은 믿지 않아요.
 function detectImageType(buffer) {
-  if (buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return 'image/png';
-  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg';
-  if (buffer.length >= 12 && buffer.toString('latin1', 0, 4) === 'RIFF' && buffer.toString('latin1', 8, 12) === 'WEBP') return 'image/webp';
-  return null;
+  const match = IMAGE_SIGNATURES.find(({ parts }) => parts.every(([offset, bytes]) => hasBytesAt(buffer, offset, bytes)));
+  return match ? match.type : null;
 }
 
 let client = null;
