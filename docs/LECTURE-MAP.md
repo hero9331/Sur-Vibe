@@ -8,7 +8,7 @@
 | 2강 | API 키, AI 코드의 보안 취약점, 정적 분석을 CI에 | Claude API 키는 `.env`에만, CodeQL이 PR마다 보안 검사 | `.github/workflows/codeql.yml` |
 | 3강 | RCTF, 입출력 계약, 제약 조건, 한 번에 한 지시, 프롬프트 인젝션 | 설명서마다 RCTF + 제약 조건 지시문, AI 답을 JSON 스키마로 고정, 캡처 속 지시 무시 | `docs/guides/`, `src/services/scanner.js` |
 | 4강 | Git 기본, GitHub, 배포 | 공개 저장소, 기능별 브랜치 | `README.md` |
-| 5강 | 코드 읽기와 검증, 코드 스멜, 리팩터링, 오류 전달법, 정적 분석 | ESLint 경고 0개와 복잡도 10 이하, 자동 시험, 커버리지, 오류 전달 양식 | `eslint.config.js`, `test/`, `START-HERE.md` |
+| 5강 | 코드 읽기와 검증, 코드 스멜, 리팩터링, 오류 전달법, 정적 분석 | ESLint 경고 0개와 복잡도 10 이하, 자동 시험, 커버리지, 오류 전달 양식, 4단계 리팩터링과 전후 비교표 (`npm run quality`) | `eslint.config.js`, `test/`, `START-HERE.md`, [리팩터링 기록](REFACTORING.md) |
 | 6강 | 관심사 분리, Never trust the client, 디자인 토큰, 콘솔 0, Lighthouse 90, 모바일 | 서버에서 다시 검사, 영수증 디자인 토큰, 6개 화면 Lighthouse 96점 이상, 폰 하단 탭 | `docs/DESIGN.md`, `public/css/style.css` |
 | 7강 | 명세서, TODO로 계획, MongoDB Atlas, Cloud Run, `.env.example`, MCP | 명세서 v1.3, TODO, Atlas + Cloud Run 배포 순서, Context7 안내 | `docs/requirements.md`, `TODO.md`, `docs/DEPLOY.md` |
 | 8강 | `.env` 분리, API 호출의 타임아웃·재시도, 429 대응, JSON | Claude 호출 타임아웃 120초·재시도 1번, 429를 쉬운 말로 안내, CSV 내보내기는 다음 후보 | `src/services/scanner.js`, `docs/requirements.md` 13장 |
