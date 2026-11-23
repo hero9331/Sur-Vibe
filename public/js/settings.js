@@ -31,53 +31,6 @@ const THEMES = [
 ];
 const THEME_KEY = 'budget.settingsTheme';
 
-// 은행·페이·카드사 이름 → 공식 앱 아이콘(public/img/banks). 직접 입력한 이름도 여기서 찾아 바로 아이콘으로 바꿔요.
-// 없거나 못 불러오면 테마 색 배지로 보여요. 위에서부터 처음 맞는 것을 써서 순서가 중요해요.
-// 1) 구체적인 이름(카드사·페이·증권·저축은행·지방은행·신협)을 먼저 → "우리동네 신협"은 신협, "카카오페이"는 카카오뱅크가 아님
-// 2) "우리", "하나", "국민"은 흔한 말이라 "우리은행"처럼 은행 이름으로 쓸 때만 → "우리동네카드"는 테마 색 배지
-const INSTITUTIONS = [
-  { pattern: /신한카드/, icon: 'shinhancard' },
-  { pattern: /국민카드|kb ?카드|kb ?pay/i, icon: 'kbcard' },
-  { pattern: /우리카드/, icon: 'wooricard' },
-  { pattern: /하나카드/, icon: 'hanacard' },
-  { pattern: /농협카드|nh ?카드|nh ?pay/i, icon: 'nhcard' },
-  { pattern: /카카오페이|kakao ?pay/i, icon: 'kakaopay' },
-  { pattern: /네이버|naver/i, icon: 'naverpay' },
-  { pattern: /페이코|payco/i, icon: 'payco' },
-  { pattern: /쿠페이|쿠팡|coupang/i, icon: 'coupang' },
-  { pattern: /삼성증권/, icon: 'samsungsec' },
-  { pattern: /nh투자|나무증권/i, icon: 'namuh' },
-  { pattern: /미래에셋/, icon: 'mirae' },
-  { pattern: /키움/, icon: 'kiwoom' },
-  { pattern: /한국투자|^한투/, icon: 'koreainvest' }, // "신한투자증권"의 "한투"는 아니에요
-  { pattern: /sbi|사이다/i, icon: 'sbi' },
-  { pattern: /ok ?저축|읏뱅크/i, icon: 'okbank' },
-  { pattern: /웰컴/, icon: 'welcome' },
-  { pattern: /새마을|\bmg\b/i, icon: 'mg' },
-  { pattern: /수협/, icon: 'suhyup' },
-  { pattern: /신협/, icon: 'shinhyup' },
-  { pattern: /부산은행|bnk ?부산/i, icon: 'busan' },
-  { pattern: /경남은행|bnk ?경남/i, icon: 'kyongnam' },
-  { pattern: /im ?뱅크|im ?bank|대구은행|dgb/i, icon: 'imbank' },
-  { pattern: /광주은행|와뱅크/, icon: 'kwangju' },
-  { pattern: /전북은행|jb ?은행|쏙뱅크/i, icon: 'jeonbuk' },
-  { pattern: /제주은행/, icon: 'jeju' },
-  { pattern: /sc ?제일|제일은행|standard/i, icon: 'sc' },
-  { pattern: /케이뱅크|k ?bank/i, icon: 'kbank' },
-  { pattern: /토스(?!트)/, icon: 'toss' },
-  { pattern: /카카오/, icon: 'kakaobank' },
-  { pattern: /신한/, icon: 'shinhan' },
-  { pattern: /국민은행|^국민$|\bkb/i, icon: 'kb' },
-  { pattern: /우리은행|우리\s?won|^우리$/i, icon: 'woori' },
-  { pattern: /하나은행|하나원큐|하나증권|^하나$/, icon: 'hana' },
-  { pattern: /농협|\bnh/i, icon: 'nh' },
-  { pattern: /기업은행|ibk/i, icon: 'ibk' },
-  { pattern: /삼성/, icon: 'samsungcard' },
-  { pattern: /현대카드|^현대$/, icon: 'hyundaicard' },
-  { pattern: /롯데/, icon: 'lottecard' },
-  { pattern: /\bbc\b|비씨/i, icon: 'bccard' },
-];
-
 // 고정비 아이콘: 이름에 맞는 게 있으면 그걸, 없으면 카테고리 아이콘. 모두 한 톤 선 아이콘이에요.
 // [이름 규칙, 아이콘, 어울리는 카테고리]
 const ICON_RULES = [
@@ -132,11 +85,10 @@ function iconFor({ name = '', category, wholeCategory }) {
 
 const guessCategory = (name) => ICON_RULES.find(([pattern]) => pattern.test(name))?.[2] ?? null;
 
-// 아이콘 파일 이름과, 아이콘이 없을 때 배지에 쓸 짧은 이름 ("새마을금고" → "새마")
-function institutionStyle(name = '') {
-  const short = name.replace(/\s/g, '').replace(/(저축은행|은행|뱅크|카드|증권|금고|페이|머니)$/, '').slice(0, 2) || name.slice(0, 2) || '?';
-  const found = INSTITUTIONS.find((item) => item.pattern.test(name));
-  return { icon: found?.icon ?? null, short };
+// 은행·카드사 이름의 첫 글자 ("토스뱅크" → "토", "KB국민카드" → "K")
+// 은행 로고는 회사 상표라서 공개 저장소에 올리지 않고, 이름 첫 글자를 동그라미에 넣어 보여요.
+function institutionInitial(name = '') {
+  return [...name.trim()][0]?.toUpperCase() ?? '?';
 }
 
 // 24×24 선 아이콘. 색은 글자색(currentColor)을 따라가서 테마 색과 한 톤으로 맞아요.
@@ -224,24 +176,15 @@ function row({ lead, title, sub, value, action, onClick, chevron = true }) {
 // 줄 맨 앞 동그라미 아이콘 (테마 색 한 톤)
 const iconLead = (name) => el('span', { class: 's-lead is-icon', 'aria-hidden': 'true' }, icon(name));
 
-// 아이콘이 없는 곳: 테마 색 바탕에 짧은 이름 (예: "우체", "동네")
-const textBadge = (style, label, className) => el('span', { class: className, role: 'img', 'aria-label': label }, style.short);
-
-// 은행·페이·카드사 앱 아이콘. 없거나 못 불러오면 테마 색 배지로 바꿔요.
+// 계좌 줄 맨 앞: 테마 색 동그라미 안에 은행 이름 첫 글자
 function institutionBadge(name, type) {
-  const style = institutionStyle(name);
   const label = `${name} ${typeOf(type).label}`;
-  if (!style.icon) return textBadge(style, label, 's-lead s-logo s-bank');
-  const img = el('img', { class: 's-lead s-logo', src: `/img/banks/${style.icon}.png`, alt: label, width: 40, height: 40 });
-  img.addEventListener('error', () => img.replaceWith(textBadge(style, label, 's-lead s-logo s-bank')), { once: true });
-  return img;
+  return el('span', { class: 's-lead s-bank', role: 'img', 'aria-label': label }, institutionInitial(name));
 }
 
-// 고르는 버튼 안의 작은 아이콘
+// 고르는 버튼 안의 작은 동그라미
 function chipLogo(name) {
-  const style = institutionStyle(name);
-  if (!style.icon) return el('span', { class: 'chip-mark', 'aria-hidden': 'true' }, style.short.slice(0, 1));
-  return el('img', { class: 'chip-logo', src: `/img/banks/${style.icon}.png`, alt: '', width: 20, height: 20 });
+  return el('span', { class: 'chip-mark', 'aria-hidden': 'true' }, institutionInitial(name));
 }
 
 function addRow(text, onClick) {

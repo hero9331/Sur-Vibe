@@ -1219,20 +1219,13 @@ button.s-row:focus-visible {
   text-align: center;
 }
 
-/* ── 계좌·카드: 은행 앱 아이콘, 잔액, 숨긴 계좌 ───── */
-.s-lead.s-logo {
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
-}
-
-/* 아이콘이 없는 곳(직접 입력 등): 테마 색 바탕 + 짧은 이름 */
+/* ── 계좌·카드: 은행 이름 첫 글자 동그라미, 잔액, 숨긴 계좌 ───── */
+/* 은행 로고(회사 상표) 대신 테마 색 동그라미 안에 이름 첫 글자 */
 .s-bank {
   background: var(--brand-soft);
   color: var(--brand-text);
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 800;
-  letter-spacing: -0.04em;
 }
 
 .chip-mark {
@@ -1242,7 +1235,7 @@ button.s-row:focus-visible {
   width: 20px;
   height: 20px;
   margin-left: -4px;
-  border-radius: 6px;
+  border-radius: 50%;
   background: var(--brand-soft);
   color: var(--brand-text);
   font-size: 11px;
@@ -1397,15 +1390,6 @@ button.s-row:focus-visible {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-}
-
-.chip-logo {
-  flex: none;
-  width: 20px;
-  height: 20px;
-  margin-left: -4px;
-  border-radius: 6px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
 .chip-input {
