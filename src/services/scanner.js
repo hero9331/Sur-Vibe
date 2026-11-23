@@ -64,16 +64,27 @@ function isRealDate(value) {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
+const MAX_MERCHANT_LENGTH = 100;
+
+const cleanMerchant = (value) => String(value ?? '').trim().slice(0, MAX_MERCHANT_LENGTH);
+const cleanAmount = (value) => Math.round(Math.abs(Number(value)));
+const isPositiveAmount = (amount) => Number.isFinite(amount) && amount > 0;
+const pickCategory = (value) => (CATEGORY_NAMES.includes(value) ? value : '기타');
+
+// AI가 준 거래 한 건을 검사해요. 형식이 틀리면 null.
+function cleanItem(item) {
+  if (!item) return null;
+  const merchant = cleanMerchant(item.merchant);
+  const amount = cleanAmount(item.amount);
+  if (!merchant || !isRealDate(item.date) || !isPositiveAmount(amount)) return null;
+
+  const category = pickCategory(item.category);
+  return { date: item.date, merchant, amount, category, isExpense: isExpenseCategory(category) };
+}
+
 // AI 답도 그대로 믿지 않고 다시 검사해요. (9강 Validation) 형식이 틀린 건은 뺍니다.
 function normalizeItems(rawItems) {
-  return rawItems.flatMap((item) => {
-    const merchant = String(item?.merchant ?? '').trim().slice(0, 100);
-    const amount = Math.round(Math.abs(Number(item?.amount)));
-    if (!merchant || !isRealDate(item?.date) || !Number.isFinite(amount) || amount <= 0) return [];
-
-    const category = CATEGORY_NAMES.includes(item.category) ? item.category : '기타';
-    return [{ date: item.date, merchant, amount, category, isExpense: isExpenseCategory(category) }];
-  });
+  return rawItems.map(cleanItem).filter(Boolean);
 }
 
 // 파일 내용의 앞부분을 보고 진짜 이미지인지 확인해요. 브라우저가 보낸 파일 형식은 믿지 않아요.
