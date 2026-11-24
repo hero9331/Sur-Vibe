@@ -262,6 +262,7 @@
 - 날짜는 한국 시간(Asia/Seoul) 기준이에요. 설정을 저장한 적 없으면 예산 0, 고정비 없음으로 계산해요
 - 지출(`isExpense: true`)만 더해요
 - 고정비로 등록한 결제는 `spentBeforeToday`, `spentToday`에서 빼요. 예산에서 이미 뺐으니 두 번 계산하지 않아요. `src/services/fixedCosts.js`의 `isFixedCost(merchant, fixedCosts, category)`를 쓰면 돼요. 월별 합계에는 그대로 넣어요
+- `wholeCategory: true`로 등록한 고정비는 결제처 이름이 달라도 같은 카테고리의 지출을 오늘 예산의 사용액에서 빼요.
   - 거래의 `category`도 같이 넘겨 주세요. "그 외 교통비"처럼 `wholeCategory`인 고정비는 카테고리로 비교해요
 
 ### GET /api/summary/monthly?month=2026-11

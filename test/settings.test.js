@@ -195,6 +195,25 @@ test('[A 고정비] wholeCategory 고정비는 그 카테고리 결제를 모두
   assert.equal(isFixedCost('메가커피', costs, '카페'), false);
 });
 
+test('[A 고정비] 카테고리 전체 고정비는 오늘 예산에 한 번만 반영한다', async () => {
+  const { id, token } = await newUser('fixed_category');
+  const today = kstToday();
+  const saved = await call('PUT', '/api/settings', { token, body: {
+    monthlyBudget: 300000,
+    fixedCosts: [{ name: '그 외 교통비', amount: 75000, category: '교통', wholeCategory: true }],
+  } });
+  assert.equal(saved.status, 200);
+  await addRows(id, [
+    [today, '카카오T 택시', 21000, '교통'],
+    [today, '메가커피', 2000, '카페'],
+  ]);
+
+  const { status, data } = await call('GET', '/api/summary/today', { token });
+  assert.equal(status, 200);
+  assert.equal(data.fixedTotal, 75000);
+  assert.equal(data.spentToday, 2000);
+});
+
 test('[A 설정] 카테고리·결제일·구독 알림을 저장하고, 알림을 안 보내면 그대로 둔다', async () => {
   const a = await newUser('setting_v0');
   const first = await call('GET', '/api/settings', { token: a.token });

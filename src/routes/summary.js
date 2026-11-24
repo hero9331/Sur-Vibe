@@ -49,7 +49,7 @@ function calcToday({ today, setting, transactions }) {
 
   // 고정비는 예산에서 이미 뺐으니 쓴 돈에서는 빼요 (두 번 계산 방지)
   const spent = transactions.filter((t) =>
-    t.isExpense && t.date.startsWith(month) && t.date <= today && !isFixedCost(t.merchant, fixedCosts));
+    t.isExpense && t.date.startsWith(month) && t.date <= today && !isFixedCost(t.merchant, fixedCosts, t.category));
   const spentBeforeToday = sumAmount(spent.filter((t) => t.date < today));
   const spentToday = sumAmount(spent.filter((t) => t.date === today));
 
