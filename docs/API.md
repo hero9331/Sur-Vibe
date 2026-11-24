@@ -67,17 +67,28 @@
 ### GET /api/accounts
 ```json
 응답 200 [
-  { "id": "6730...", "name": "생활비 통장", "type": "bank", "institution": "토스뱅크", "purpose": "매일 쓰는 돈", "createdAt": "...", "updatedAt": "..." }
+  { "id": "6730...", "name": "생활비 통장", "type": "bank", "institution": "토스뱅크", "purpose": "매일 쓰는 돈",
+    "last4": "4821", "balance": 1284300, "balanceChange": { "amount": -16500, "since": "2026-11-17" },
+    "interestRate": 2, "hidden": false, "createdAt": "...", "updatedAt": "..." }
 ]
 ```
+- `last4`: 계좌·카드번호 끝 4자리 (없으면 `""`). 같은 은행 계좌를 구분해요
+- `balance`: 직접 적은 잔액 (없으면 `null`). 은행 연동은 없어요
+- `balanceChange`: 오늘 전 마지막 잔액 기록과 비교한 값. 보통 `since`가 어제예요. 기록이 없으면 `null`
+- `interestRate`: 연 이자율(%) (없으면 `null`), `hidden`: 목록에서 숨기기. 숨겨도 캡처 읽기의 내 계좌 이체 구분에는 써요
 
 ### POST /api/accounts
 ```json
-요청 { "name": "생활비 통장", "type": "bank", "institution": "토스뱅크", "purpose": "매일 쓰는 돈" }
-응답 201 { "id": "6730...", "name": "생활비 통장", ... }
+요청 { "name": "생활비 통장", "type": "bank", "institution": "토스뱅크", "purpose": "매일 쓰는 돈",
+       "last4": "1000-12-3454821", "balance": 1284300, "interestRate": 2, "hidden": false }
+응답 201 { "id": "6730...", "name": "생활비 통장", "last4": "4821", ... }
 ```
-- `type`은 `"bank"`(계좌) 또는 `"card"`(카드)
-- `name`, `type`, `institution`은 꼭 필요 → 없으면 400
+- `type`은 `"bank"`(은행 계좌), `"pay"`(페이머니: 카카오페이·네이버페이 등), `"card"`(카드) 중 하나. 화면에서는 셋을 묶어 "자산"이라고 불러요
+- 잔액(`balance`)은 은행·페이머니에, 이자율(`interestRate`)은 은행에, 번호(`last4`)는 은행·카드에 써요
+- `name`, `type`, `institution`은 꼭 필요 → 없으면 400. 나머지는 없어도 돼요
+- `name`, `institution`은 30자, `purpose`는 50자까지 → 넘으면 400. 앞뒤 공백은 지워서 저장해요
+- `last4`: 전체 번호를 보내도 **끝 4자리만 저장**해요 (개인정보). 숫자가 4개보다 적으면 400
+- `balance`: 원 단위 정수 또는 `null` / `interestRate`: 0~100 숫자(소수 둘째 자리까지) 또는 `null` / `hidden`: true·false → 아니면 400
 
 ### PATCH /api/accounts/:id
 ```json
@@ -85,6 +96,7 @@
 응답 200 { "id": "6730...", ... }  ← 바뀐 전체
 ```
 - 없거나 남의 것이면 404
+- `balance`를 보내면 그날 잔액 기록이 남아요 (같은 날 여러 번 고치면 마지막 값만). 이 기록으로 `balanceChange`를 계산해요
 
 ### DELETE /api/accounts/:id
 - 응답 204 / 없거나 남의 것이면 404
@@ -93,16 +105,84 @@
 
 ### GET /api/settings
 ```json
-응답 200 { "monthlyBudget": 500000, "fixedCosts": [ { "name": "넷플릭스", "amount": 13500 } ] }
+응답 200 {
+  "monthlyBudget": 500000,
+  "fixedCosts": [
+    { "name": "넷플릭스", "amount": 13500, "category": "구독", "billingDay": 1, "wholeCategory": false },
+    { "name": "그 외 교통비", "amount": 75000, "category": "교통", "billingDay": null, "wholeCategory": true }
+  ],
+  "subscriptionAlert": { "enabled": true, "daysBefore": 3 }
+}
 ```
-- 아직 저장한 적 없으면 `{ "monthlyBudget": 0, "fixedCosts": [] }`
+- 아직 저장한 적 없으면 `{ "monthlyBudget": 0, "fixedCosts": [], "subscriptionAlert": { "enabled": true, "daysBefore": 3 } }`
+- 고정비 `category`: 지출 카테고리 중 하나 또는 `null` / `billingDay`: 매달 결제일 1~31 또는 `null`
+- `wholeCategory: true`인 고정비(예: "그 외 교통비")는 이름과 상관없이 **그 카테고리 결제를 모두 고정비로** 봐요
+- `subscriptionAlert`: 구독(`category: "구독"`이고 `billingDay`가 있는 고정비) 결제 `daysBefore`일 전에 "계속 쓸까요?" 알림을 보여 줄지. 지금은 설정 화면 미리보기만 있고, 홈 화면 알림으로 쓰면 돼요
 
 ### PUT /api/settings
 ```json
-요청 { "monthlyBudget": 500000, "fixedCosts": [ { "name": "넷플릭스", "amount": 13500 } ] }
-응답 200 (요청과 같은 형식)
+요청 { "monthlyBudget": 500000, "fixedCosts": [ { "name": "넷플릭스", "amount": 13500, "category": "구독", "billingDay": 1 } ],
+       "subscriptionAlert": { "enabled": true, "daysBefore": 3 } }
+응답 200 (GET과 같은 형식)
 ```
 - 통째로 바꿔요. 금액이 음수면 400
+- 통째로 바꾸니까 `monthlyBudget`, `fixedCosts` 둘 다 보내요. 하나라도 없으면 400 (실수로 고정비가 지워지지 않게)
+- `subscriptionAlert`는 안 보내면 그대로 둬요. 보내면 `enabled`(true·false)와 `daysBefore`(1~14) 둘 다 → 아니면 400
+
+### PATCH /api/settings/subscription-alert
+
+- 요청은 `{ "enabled": false }` 또는 `{ "daysBefore": 7 }` 중 하나예요. 알림 시점은 1~14 사이의 정수예요. 두 값을 같이 보내거나 값이 틀리면 400이에요.
+- 보낸 항목만 저장하고, 응답 200에 현재 알림 설정 전체를 돌려줘요. 예를 들어 `{ "enabled": false, "daysBefore": 7 }` 형식이에요.
+- 금액은 0 이상 정수, 고정비 이름은 1~30자, 고정비는 30개까지, 카테고리·결제일이 틀리면 → 400
+
+### GET /api/settings/suggestions?months=2
+지난 거래로 **다음 달 고정지출을 카테고리별로** 예상해요. 설정 화면의 "다음 달 고정지출 예상" 카드가 불러요. 저장은 하지 않아요.
+```json
+응답 200 {
+  "months": 2,
+  "from": "2026-09-01",
+  "to": "2026-11-18",
+  "averageMonths": ["2026-09", "2026-10"],
+  "averageSpending": 239500,
+  "expectedTotal": 172500,
+  "categories": [
+    { "category": "교통", "expected": 130000,
+      "items": [ { "name": "티머니 정기권", "category": "교통", "amount": 55000, "billingDay": 1, "months": 3, "registered": false } ],
+      "steady": { "category": "교통", "average": 75000, "min": 72000, "max": 78000, "registered": false } },
+    { "category": "구독", "expected": 42500, "items": [ ... ], "steady": null }
+  ]
+}
+```
+- `months`: 이번 달 앞으로 몇 달을 볼지 (1~12, 없으면 2) → 틀리면 400. 2면 11월 기준 9월 1일 ~ 오늘
+- `categories[].items`: 같은 가게에서 **한 달에 한 번씩, 두 달 이상, 금액 차이 10% 안**으로 나간 지출 (정기권, 구독료, 통신비)
+  - `amount`는 가장 최근 금액, `billingDay`는 가장 최근 결제일, `months`는 나온 달 수, `registered`는 **이름으로** 이미 고정비에 있는지
+- `categories[].steady`: 그 밖에 **다 끝난 달마다 평균 ±20% 안**으로 쓴 돈 (예: 버스·택시). 한 달 평균 1만 원 이상, 다 끝난 달이 2개 이상일 때만. `registered`는 같은 카테고리의 `wholeCategory` 고정비가 있는지
+- `expected` = items 금액 합 + steady 평균. `expectedTotal`은 모든 카테고리의 합. 금액이 큰 카테고리부터
+- 학식·외식·배달·카페·편의점·술·모임은 매일 쓰는 돈이라 고정지출로 보지 않아요
+- `averageMonths`: 평균을 낸 달(거래가 있는 지난달들, 이번 달은 빼요). `averageSpending`은 그 달들의 전체 지출 평균
+- 지출(`isExpense: true`)만, 내 거래만 봐요. 계산은 `src/services/budgetSuggest.js`
+
+### GET /api/settings/membership
+설정 화면 **계정 → 탈퇴하기** 시트가 먼저 불러요. 탈퇴하면 지워지는 내 기록 수를 알려 줘요.
+```json
+응답 200 {
+  "username": "survibe01",
+  "records": { "transactions": 40, "accounts": 4, "fixedCosts": 4, "rules": 2 },
+  "blockedReason": null
+}
+```
+- `blockedReason`: 탈퇴할 수 없는 이유. 시연 서버(임시 DB)의 연습 계정 `demo`만 막아요 (여러 사람이 같이 쓰는 계정이라서). 탈퇴할 수 있으면 `null`
+
+### DELETE /api/settings/membership — 회원 탈퇴
+```json
+요청 { "password": "password123" }        ← DELETE지만 본문(JSON)을 보내요
+응답 200 { "deleted": { "accounts": 4, "transactions": 40, "rules": 2, "settings": 1 } }
+```
+- 비밀번호를 한 번 더 확인해요. 없거나 틀리면 **400** (401이면 화면의 `api()`가 로그아웃시켜서 401을 쓰지 않아요)
+- 연습 계정이면 403, 비밀번호를 15분 동안 10번 틀리면 429
+- `user` 칸이 있는 **모든 모델**(거래, 자산, 분류 규칙, 설정)에서 내 기록을 지우고, 마지막에 계정을 지워요. `deleted`는 컬렉션마다 지운 개수
+- 새 모델을 만들어도 `user: { type: ObjectId, ref: 'User' }` 칸만 있으면 탈퇴할 때 같이 지워져요 (`src/services/membership.js`)
+- 지운 뒤에는 같은 아이디로 다시 가입할 수 있어요. 화면은 이 기기에 저장한 값(`budget.`으로 시작하는 localStorage: 로그인 토큰, 디자인 시안)도 지워요
 
 ---
 
@@ -181,7 +261,9 @@
 - `level`: 오늘 쓴 돈이 `dailyAllowance`의 80% 미만 `"ok"`, 80% 이상 `"warning"`, 100% 이상 `"over"`. 예산을 아직 안 정해서 둘 다 0이면 `"ok"`, `dailyAllowance`가 0인데 오늘 쓴 돈이 있으면 `"over"`
 - 날짜는 한국 시간(Asia/Seoul) 기준이에요. 설정을 저장한 적 없으면 예산 0, 고정비 없음으로 계산해요
 - 지출(`isExpense: true`)만 더해요
-- 고정비로 등록한 결제는 `spentBeforeToday`, `spentToday`에서 빼요. 예산에서 이미 뺐으니 두 번 계산하지 않아요. `src/services/fixedCosts.js`의 `isFixedCost()`를 쓰면 돼요. 월별 합계에는 그대로 넣어요
+- 고정비로 등록한 결제는 `spentBeforeToday`, `spentToday`에서 빼요. 예산에서 이미 뺐으니 두 번 계산하지 않아요. `src/services/fixedCosts.js`의 `isFixedCost(merchant, fixedCosts, category)`를 쓰면 돼요. 월별 합계에는 그대로 넣어요
+- `wholeCategory: true`로 등록한 고정비는 결제처 이름이 달라도 같은 카테고리의 지출을 오늘 예산의 사용액에서 빼요.
+  - 거래의 `category`도 같이 넘겨 주세요. "그 외 교통비"처럼 `wholeCategory`인 고정비는 카테고리로 비교해요
 
 ### GET /api/summary/monthly?month=2026-11
 ```json
