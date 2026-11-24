@@ -64,24 +64,45 @@ function isRealDate(value) {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
+const MAX_MERCHANT_LENGTH = 100;
+
+const cleanMerchant = (value) => String(value ?? '').trim().slice(0, MAX_MERCHANT_LENGTH);
+const cleanAmount = (value) => Math.round(Math.abs(Number(value)));
+const isPositiveAmount = (amount) => Number.isFinite(amount) && amount > 0;
+const pickCategory = (value) => (CATEGORY_NAMES.includes(value) ? value : '기타');
+
+// AI가 준 거래 한 건을 검사해요. 형식이 틀리면 null.
+function cleanItem(item) {
+  if (!item) return null;
+  const merchant = cleanMerchant(item.merchant);
+  const amount = cleanAmount(item.amount);
+  if (!merchant || !isRealDate(item.date) || !isPositiveAmount(amount)) return null;
+
+  const category = pickCategory(item.category);
+  return { date: item.date, merchant, amount, category, isExpense: isExpenseCategory(category) };
+}
+
 // AI 답도 그대로 믿지 않고 다시 검사해요. (9강 Validation) 형식이 틀린 건은 뺍니다.
 function normalizeItems(rawItems) {
-  return rawItems.flatMap((item) => {
-    const merchant = String(item?.merchant ?? '').trim().slice(0, 100);
-    const amount = Math.round(Math.abs(Number(item?.amount)));
-    if (!merchant || !isRealDate(item?.date) || !Number.isFinite(amount) || amount <= 0) return [];
+  return rawItems.map(cleanItem).filter(Boolean);
+}
 
-    const category = CATEGORY_NAMES.includes(item.category) ? item.category : '기타';
-    return [{ date: item.date, merchant, amount, category, isExpense: isExpenseCategory(category) }];
-  });
+// 이미지 종류마다 파일 앞부분에 꼭 있는 바이트 ([위치, 바이트])
+const IMAGE_SIGNATURES = [
+  { type: 'image/png', parts: [[0, Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])]] },
+  { type: 'image/jpeg', parts: [[0, Buffer.from([0xff, 0xd8, 0xff])]] },
+  { type: 'image/webp', parts: [[0, Buffer.from('RIFF', 'latin1')], [8, Buffer.from('WEBP', 'latin1')]] },
+];
+
+function hasBytesAt(buffer, offset, expected) {
+  const end = offset + expected.length;
+  return buffer.length >= end && buffer.subarray(offset, end).equals(expected);
 }
 
 // 파일 내용의 앞부분을 보고 진짜 이미지인지 확인해요. 브라우저가 보낸 파일 형식은 믿지 않아요.
 function detectImageType(buffer) {
-  if (buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return 'image/png';
-  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg';
-  if (buffer.length >= 12 && buffer.toString('latin1', 0, 4) === 'RIFF' && buffer.toString('latin1', 8, 12) === 'WEBP') return 'image/webp';
-  return null;
+  const match = IMAGE_SIGNATURES.find(({ parts }) => parts.every(([offset, bytes]) => hasBytesAt(buffer, offset, bytes)));
+  return match ? match.type : null;
 }
 
 let client = null;
@@ -93,22 +114,19 @@ function getClient() {
   return client;
 }
 
+// Claude API 오류 종류 → 사용자에게 보여 줄 응답. 위에서부터 맞는 첫 줄을 써요. (APIError는 나머지를 모두 포함해서 맨 아래)
+const API_ERROR_RESPONSES = [
+  { types: [Anthropic.AuthenticationError, Anthropic.PermissionDeniedError], status: 503, message: 'Claude API 키를 확인해 주세요' },
+  { types: [Anthropic.RateLimitError], status: 429, message: '지금 요청이 많아요. 잠시 후 다시 해 주세요' },
+  { types: [Anthropic.BadRequestError], status: 400, message: '캡처를 AI로 보내지 못했어요. 더 작은 캡처로 하거나 크레딧 잔액을 확인해 주세요' },
+  { types: [Anthropic.APIError], status: 502, message: 'AI가 응답하지 않아요. 잠시 후 다시 해 주세요' },
+];
+
 function toHttpError(error) {
   if (error instanceof HttpError) return error;
   console.error('[scan] Claude API 오류:', error.message);
-  if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) {
-    return new HttpError(503, 'Claude API 키를 확인해 주세요');
-  }
-  if (error instanceof Anthropic.RateLimitError) {
-    return new HttpError(429, '지금 요청이 많아요. 잠시 후 다시 해 주세요');
-  }
-  if (error instanceof Anthropic.BadRequestError) {
-    return new HttpError(400, '캡처를 AI로 보내지 못했어요. 더 작은 캡처로 하거나 크레딧 잔액을 확인해 주세요');
-  }
-  if (error instanceof Anthropic.APIError) {
-    return new HttpError(502, 'AI가 응답하지 않아요. 잠시 후 다시 해 주세요');
-  }
-  return error;
+  const known = API_ERROR_RESPONSES.find(({ types }) => types.some((Type) => error instanceof Type));
+  return known ? new HttpError(known.status, known.message) : error;
 }
 
 function buildRequestText(accounts) {
@@ -141,19 +159,21 @@ async function requestScan(images, accounts) {
   return getClient().beta.messages.create({ ...params, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' });
 }
 
-// images: [{ mediaType: 'image/png', buffer: Buffer }], accounts: [{ name, institution }]
-async function readCaptures(images, accounts = []) {
-  let response;
-  try {
-    response = await requestScan(images, accounts);
-  } catch (error) {
-    throw toHttpError(error);
-  }
+// 끝까지 답하지 못한 이유 → 사용자에게 보여 줄 문구
+const STOP_REASON_MESSAGES = new Map([
+  ['refusal', '이 캡처는 읽을 수 없어요. 다른 캡처로 해 주세요'],
+  ['max_tokens', '거래가 너무 많아요. 캡처 수를 줄여 주세요'],
+]);
 
-  if (response.stop_reason === 'refusal') throw new HttpError(422, '이 캡처는 읽을 수 없어요. 다른 캡처로 해 주세요');
-  if (response.stop_reason === 'max_tokens') throw new HttpError(422, '거래가 너무 많아요. 캡처 수를 줄여 주세요');
+// 1단계: AI 답이 끝까지 왔는지 확인해요.
+function checkStopReason(response) {
+  const message = STOP_REASON_MESSAGES.get(response.stop_reason);
+  if (message) throw new HttpError(422, message);
+}
 
-  // 다른 모델이 이어서 답하면 앞에 끊긴 글이 남을 수 있어서 마지막 글을 읽어요.
+// 2단계: 답의 글을 JSON으로 읽어 거래 목록을 꺼내요.
+// 다른 모델이 이어서 답하면 앞에 끊긴 글이 남을 수 있어서 마지막 글을 읽어요.
+function parseItems(response) {
   const text = response.content.filter((block) => block.type === 'text').at(-1)?.text;
   let parsed;
   try {
@@ -161,7 +181,16 @@ async function readCaptures(images, accounts = []) {
   } catch {
     throw new HttpError(502, 'AI 답을 이해하지 못했어요. 다시 해 주세요');
   }
-  return normalizeItems(Array.isArray(parsed?.items) ? parsed.items : []);
+  return Array.isArray(parsed?.items) ? parsed.items : [];
+}
+
+// images: [{ mediaType: 'image/png', buffer: Buffer }], accounts: [{ name, institution }]
+async function readCaptures(images, accounts = []) {
+  const response = await requestScan(images, accounts).catch((error) => {
+    throw toHttpError(error);
+  });
+  checkStopReason(response);
+  return normalizeItems(parseItems(response));
 }
 
 module.exports = { readCaptures, normalizeItems, detectImageType };

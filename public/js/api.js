@@ -17,21 +17,17 @@ export function logout() {
   location.href = '/login.html';
 }
 
-export async function api(method, url, body) {
-  const headers = {};
-  const token = getToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
+// 1단계: 보낼 요청 만들기. 파일(FormData)은 그대로, 나머지 본문은 JSON으로 보내요.
+function buildRequest(method, body, token) {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  if (body === undefined || body instanceof FormData) return { method, headers, body };
+  return { method, headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
+}
 
-  let payload;
-  if (body instanceof FormData) {
-    payload = body; // 파일 올리기
-  } else if (body !== undefined) {
-    headers['Content-Type'] = 'application/json';
-    payload = JSON.stringify(body);
-  }
+const errorFrom = (data, status) => new Error(data?.error || `요청 실패 (${status})`);
 
-  const res = await fetch(url, { method, headers, body: payload });
-
+// 2단계: 받은 응답 읽기. 로그인이 풀렸으면 로그인 화면으로 보내요.
+async function readResponse(res, token) {
   if (res.status === 401 && token) {
     logout();
     throw new Error('로그인이 필요해요');
@@ -39,8 +35,14 @@ export async function api(method, url, body) {
   if (res.status === 204) return null;
 
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(data?.error || `요청 실패 (${res.status})`);
+  if (!res.ok) throw errorFrom(data, res.status);
   return data;
+}
+
+export async function api(method, url, body) {
+  const token = getToken();
+  const res = await fetch(url, buildRequest(method, body, token));
+  return readResponse(res, token);
 }
 
 // 12000 → "12,000원"

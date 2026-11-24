@@ -212,6 +212,21 @@ test('Claude API 오류를 사용자에게 알맞은 응답으로 바꾼다', as
   assert.doesNotMatch((await res.json()).error, /secret detail/);
 });
 
+test('Claude API의 권한 오류, 요청 초과, 서버 오류도 알맞은 응답으로 바꾼다', async () => {
+  const errorBody = (type) => ({ type: 'error', error: { type, message: 'secret detail' } });
+  const cases = [
+    [403, 'permission_error', 503],
+    [429, 'rate_limit_error', 429],
+    [500, 'api_error', 502],
+  ];
+  for (const [claudeStatus, type, expected] of cases) {
+    nextReply = { status: claudeStatus, body: errorBody(type) };
+    const res = await upload([PNG]);
+    assert.equal(res.status, expected, `Claude ${claudeStatus}`);
+    assert.doesNotMatch((await res.json()).error, /secret detail/);
+  }
+});
+
 test('AI 답이 JSON이 아니면 502', async () => {
   nextReply = {
     status: 200,

@@ -8,18 +8,43 @@ export function fitSize(width, height, maxSide = MAX_SIDE) {
   return { width: Math.round(width * scale), height: Math.round(height * scale) };
 }
 
+const JPEG_QUALITY = 0.9;
+const JPEG_QUALITY_SMALLER = 0.7; // 처음 줄인 것도 5MB가 넘을 때
+
 function toJpeg(canvas, quality) {
   return new Promise((resolve) => { canvas.toBlob(resolve, 'image/jpeg', quality); });
 }
 
+// 브라우저가 못 여는 파일이면 null
+async function openBitmap(file) {
+  try {
+    return await createImageBitmap(file);
+  } catch {
+    return null;
+  }
+}
+
+// 사진을 정한 크기의 캔버스에 그려요. 다 그린 사진은 메모리에서 닫아요.
+function drawResized(bitmap, size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size.width;
+  canvas.height = size.height;
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, size.width, size.height);
+  bitmap.close();
+  return canvas;
+}
+
+// jpg로 바꾸고, 그래도 크면 화질을 한 번 더 낮춰요. 못 바꾸면 null
+async function compressToJpeg(canvas) {
+  const blob = await toJpeg(canvas, JPEG_QUALITY);
+  if (blob && blob.size > MAX_FILE_SIZE) return toJpeg(canvas, JPEG_QUALITY_SMALLER);
+  return blob;
+}
+
 // 너무 길거나 무거운 캡처만 줄여요. 괜찮은 캡처는 화질 그대로 보내요.
 export async function prepareCapture(file) {
-  let bitmap;
-  try {
-    bitmap = await createImageBitmap(file);
-  } catch {
-    return file; // 브라우저가 못 여는 파일은 서버 검사에 맡겨요
-  }
+  const bitmap = await openBitmap(file);
+  if (!bitmap) return file; // 브라우저가 못 여는 파일은 서버 검사에 맡겨요
 
   const size = fitSize(bitmap.width, bitmap.height);
   if (size.width === bitmap.width && file.size <= MAX_FILE_SIZE) {
@@ -27,14 +52,7 @@ export async function prepareCapture(file) {
     return file;
   }
 
-  const canvas = document.createElement('canvas');
-  canvas.width = size.width;
-  canvas.height = size.height;
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, size.width, size.height);
-  bitmap.close();
-
-  let blob = await toJpeg(canvas, 0.9);
-  if (blob && blob.size > MAX_FILE_SIZE) blob = await toJpeg(canvas, 0.7);
+  const blob = await compressToJpeg(drawResized(bitmap, size));
   if (!blob) return file;
   return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
 }
