@@ -58,9 +58,13 @@ function readFixedCost(cost) {
   };
 }
 
+function validAlertDays(value) {
+  return Number.isInteger(value) && value >= 1 && value <= 14;
+}
+
 function readAlert(alert) {
   if (alert === undefined) return undefined; // 안 보내면 그대로 둬요
-  const ok = typeof alert?.enabled === 'boolean' && Number.isInteger(alert.daysBefore) && alert.daysBefore >= 1 && alert.daysBefore <= 14;
+  const ok = typeof alert?.enabled === 'boolean' && validAlertDays(alert.daysBefore);
   if (!ok) throw new HttpError(400, '구독 알림은 켜기 여부와 1~14일 전 중 하나로 보내 주세요');
   return { enabled: alert.enabled, daysBefore: alert.daysBefore };
 }
@@ -120,6 +124,25 @@ router.put('/', async (req, res) => {
     setDefaultsOnInsert: true,
   });
   res.json(toResponse(setting));
+});
+
+router.patch('/subscription-alert', async (req, res) => {
+  const { enabled, daysBefore } = req.body ?? {};
+  const keys = Object.keys(req.body ?? {});
+  if (keys.length !== 1 || (typeof enabled !== 'boolean' && !validAlertDays(daysBefore))) {
+    throw new HttpError(400, '알림을 켤지 또는 결제 며칠 전에 알릴지 하나만 보내 주세요');
+  }
+
+  const update = typeof enabled === 'boolean'
+    ? { 'subscriptionAlert.enabled': enabled }
+    : { 'subscriptionAlert.daysBefore': daysBefore };
+  const setting = await Setting.findOneAndUpdate({ user: req.userId }, { $set: update }, {
+    upsert: true,
+    returnDocument: 'after',
+    runValidators: true,
+    setDefaultsOnInsert: true,
+  });
+  res.json(toAlert(setting.subscriptionAlert));
 });
 
 // 지난 몇 달 거래로 예상한 카테고리별 고정지출

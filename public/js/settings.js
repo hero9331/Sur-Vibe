@@ -565,8 +565,8 @@ function openBudgetSheet() {
 // ── 고정비 ───────────────────────────────────────
 
 // action: 알림에 붙일 버튼 (예: 되돌리기)
-async function saveSettings(next, message, action) {
-  state.settings = await api('PUT', '/api/settings', next);
+async function saveSettings({ monthlyBudget, fixedCosts }, message, action) {
+  state.settings = await api('PUT', '/api/settings', { monthlyBudget, fixedCosts });
   renderProfile();
   renderBudget();
   renderFixed();
@@ -841,7 +841,10 @@ function renderForecast() {
 
 async function saveAlert(alert, message) {
   try {
-    await saveSettings({ ...state.settings, subscriptionAlert: alert }, message);
+    state.settings.subscriptionAlert = await api('PATCH', '/api/settings/subscription-alert', alert);
+    renderFixed();
+    renderAlerts();
+    toast(message);
   } catch (err) {
     toast(err.message);
     renderAlerts();
@@ -870,13 +873,13 @@ function renderAlerts() {
     id: 'alert-switch',
     checked: alert.enabled,
     label: '구독 결제 알림',
-    onChange: (on) => saveAlert({ ...alert, enabled: on }, on ? '구독 결제 알림을 켰어요' : '구독 결제 알림을 껐어요'),
+    onChange: (on) => saveAlert({ enabled: on }, on ? '구독 결제 알림을 켰어요' : '구독 결제 알림을 껐어요'),
   });
   const days = choiceChips({
     options: ALERT_DAYS.map(String),
     value: String(alert.daysBefore),
     label: (option) => `${option}일 전`,
-    onChange: (value) => saveAlert({ ...alert, daysBefore: Number(value) }, `결제 ${value}일 전에 알려 드릴게요`),
+    onChange: (value) => saveAlert({ daysBefore: Number(value) }, `결제 ${value}일 전에 알려 드릴게요`),
   });
   document.getElementById('alert-section').replaceChildren(card({
     title: '알림',

@@ -128,6 +128,11 @@
 - 통째로 바꿔요. 금액이 음수면 400
 - 통째로 바꾸니까 `monthlyBudget`, `fixedCosts` 둘 다 보내요. 하나라도 없으면 400 (실수로 고정비가 지워지지 않게)
 - `subscriptionAlert`는 안 보내면 그대로 둬요. 보내면 `enabled`(true·false)와 `daysBefore`(1~14) 둘 다 → 아니면 400
+
+### PATCH /api/settings/subscription-alert
+
+- 요청은 `{ "enabled": false }` 또는 `{ "daysBefore": 7 }` 중 하나예요. 알림 시점은 1~14 사이의 정수예요. 두 값을 같이 보내거나 값이 틀리면 400이에요.
+- 보낸 항목만 저장하고, 응답 200에 현재 알림 설정 전체를 돌려줘요. 예를 들어 `{ "enabled": false, "daysBefore": 7 }` 형식이에요.
 - 금액은 0 이상 정수, 고정비 이름은 1~30자, 고정비는 30개까지, 카테고리·결제일이 틀리면 → 400
 
 ### GET /api/settings/suggestions?months=2

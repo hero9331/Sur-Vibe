@@ -213,6 +213,22 @@ test('[A 설정] 카테고리·결제일·구독 알림을 저장하고, 알림�
   assert.deepEqual((await call('GET', '/api/settings', { token: a.token })).data.subscriptionAlert, { enabled: false, daysBefore: 7 });
 });
 
+test('[A 설정] 다른 탭의 알림 시점과 스위치 변경을 각각 유지한다', async () => {
+  const { token } = await newUser('setting_alert');
+  const patch = (body) => call('PATCH', '/api/settings/subscription-alert', { token, body });
+
+  const firstTab = await patch({ daysBefore: 7 });
+  assert.equal(firstTab.status, 200);
+  assert.deepEqual(firstTab.data, { enabled: true, daysBefore: 7 });
+  assert.deepEqual((await patch({ enabled: false })).data, { enabled: false, daysBefore: 7 });
+  assert.deepEqual((await patch({ daysBefore: 1 })).data, { enabled: false, daysBefore: 1 });
+  assert.deepEqual((await patch({ enabled: true })).data, { enabled: true, daysBefore: 1 });
+
+  for (const body of [{}, { enabled: 'true' }, { daysBefore: 15 }, { enabled: false, daysBefore: 3 }]) {
+    assert.equal((await patch(body)).status, 400);
+  }
+});
+
 test('[A 설정] 고정비 목록이 없거나, 이름·금액·카테고리·결제일·알림이 틀리면 400', async () => {
   const a = await newUser('setting_v1');
   const fixed = (extra) => ({ monthlyBudget: 300000, fixedCosts: [{ name: '통신비', amount: 33000, ...extra }] });
