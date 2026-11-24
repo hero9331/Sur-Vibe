@@ -58,7 +58,8 @@
 | 캡처 1장 요금 | | Anthropic 콘솔 사용량 ÷ 장수 |
 | 자동 시험 수 | | `npm test` |
 | 조사한 정책·대안 수 | | `data/policies.json` |
-| Lighthouse 점수 | | 배포 주소에서 측정 |
+| Lighthouse 점수 | 성능 98, 접근성 100, 권장 사항 100, 검색 100 (모바일, 로그인 화면, 11/24) | 배포 주소에서 측정 |
+| 리팩터링 전후 | 복잡도 5 넘는 함수 9개 → 1개, 고친 파일 평균 복잡도 26% 감소 | `docs/REFACTORING.md` |
 | 팀원 커밋, PR 수 | | GitHub Insights |
 
 가짜 캡처 점수(`eval/RESULTS.md`)는 글자가 또렷해서 잘 나와요. 발표에는 진짜 캡처 점수를 써요.
