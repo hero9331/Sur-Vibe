@@ -25,3 +25,29 @@ services:
         value: "1"
       - key: MONGOMS_DOWNLOAD_DIR
         value: /opt/render/project/src/.mongodb-binaries
+
+  # 실제로 쓰는 가계부 (Render 무료 + MongoDB Atlas 무료). 데이터가 영구히 남아요.
+  # 데모 버튼은 없고 각자 가입해서 써요. 순서는 docs/DEPLOY.md "진짜 사이트".
+  - type: web
+    name: sur-vibe
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/server.js
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "1"
+      # 아래 두 값은 비밀이라 여기 적지 않아요. Render가 처음 만들 때 물어보면 직접 붙여 넣어요.
+      - key: MONGODB_URI
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
