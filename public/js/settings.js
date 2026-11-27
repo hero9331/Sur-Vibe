@@ -23,14 +23,6 @@ const FIXED_CATEGORIES = ['구독', '생활', '교통', '학업', '문화·여�
 const SUGGEST_MONTHS = 2; // 고정지출 예상에 쓰는 기간 (지난 몇 달)
 const ALERT_DAYS = [1, 3, 7];
 
-// 회의용 포인트 색 시안. 정하고 나면 이 목록과 "디자인 시안" 칸을 지워요.
-const THEMES = [
-  { id: 'lime', label: '라임', swatch: '#bae637' },
-  { id: 'green', label: '그린', swatch: '#1f5c46' },
-  { id: 'blue', label: '블루', swatch: '#1b64da' },
-];
-const THEME_KEY = 'budget.settingsTheme';
-
 // 고정비 아이콘: 이름에 맞는 게 있으면 그걸, 없으면 카테고리 아이콘. 모두 한 톤 선 아이콘이에요.
 // [이름 규칙, 아이콘, 어울리는 카테고리]
 const ICON_RULES = [
@@ -150,12 +142,12 @@ function toast(message, action) {
   toastTimer = setTimeout(hideToast, action ? 5000 : 2400);
 }
 
-// 흰 둥근 카드. children 안에 배열이 섞여 있어도 펴서 넣어요.
-function card({ title, extra, children }) {
+// 공통 카드. children 안에 배열이 섞여 있어도 펴서 넣어요.
+function card({ title, extra, children, receipt = false }) {
   const head = title
-    ? el('div', { class: 's-card-head' }, el('h2', { class: 's-card-title' }, title), extra ? el('span', { class: 's-card-extra' }, extra) : null)
+    ? el('div', { class: 's-card-head' }, el('h2', { class: 'h6 s-card-title' }, title), extra ? el('span', { class: 's-card-extra' }, extra) : null)
     : null;
-  return el('div', { class: 's-card' }, head, [children].flat(Infinity));
+  return el('div', { class: receipt ? 'card receipt p-4 mb-3' : 'card p-4 mb-3' }, head, [children].flat(Infinity));
 }
 
 // 목록 한 줄. onClick이 있으면 누를 수 있는 줄(오른쪽 > 표시), 없으면 보기만 하는 줄이에요.
@@ -485,7 +477,7 @@ function budgetBar(budget, fixed) {
 }
 
 function legendRow(tone, label, value) {
-  return el('div', { class: 's-legend-row' }, el('span', { class: `s-dot ${tone}` }), el('span', {}, label), el('strong', {}, value));
+  return el('div', { class: 'receipt-line s-legend-row' }, el('span', { class: `s-dot ${tone}` }), el('span', {}, label), el('strong', {}, value));
 }
 
 function budgetSummary(budget) {
@@ -514,6 +506,7 @@ function renderBudget() {
     : null;
   document.getElementById('budget-section').replaceChildren(card({
     title: '한 달 예산',
+    receipt: true,
     extra: edit,
     children: [budget ? budgetSummary(budget) : budgetEmpty(), spendNote()],
   }));
@@ -829,7 +822,7 @@ function renderForecast() {
   document.getElementById('forecast-section').replaceChildren(card({
     children: [
       el('span', { class: 's-tag' }, icon('chart'), `지난 ${SUGGEST_MONTHS}달 분석`),
-      el('h2', { class: 's-card-title' }, '다음 달 고정지출 예상'),
+      el('h2', { class: 'h6 s-card-title' }, '다음 달 고정지출 예상'),
       total,
       el('p', { class: 's-card-desc' }, forecastPeriod(data)),
       forecastBody(state.suggest),
@@ -921,7 +914,8 @@ function accountSummary(visible) {
   const changeLine = diff
     ? el('div', { class: 's-asset-change' }, `${since} `, el('span', { class: `s-change ${diff > 0 ? 'is-up' : 'is-down'}` }, won(Math.abs(diff))), diff > 0 ? ' 늘었어요' : ' 줄었어요')
     : null;
-  return el('div', { class: 's-asset' }, el('div', { class: 's-asset-amount' }, won(total)), changeLine);
+  return el('div', { class: 's-asset' }, el('div', { class: 'receipt-total align-items-center gap-2' },
+    el('span', {}, '잔액 합계'), el('strong', { class: 's-asset-amount text-end' }, won(total))), changeLine);
 }
 
 // "카카오뱅크 ··7310 · 연 2%"
@@ -1307,43 +1301,6 @@ async function submitLeave(form) {
   return false;
 }
 
-// ── 디자인 시안 (팀 회의용, 정하면 지워요) ──────────
-
-function savedTheme() {
-  try {
-    return localStorage.getItem(THEME_KEY) || 'lime';
-  } catch {
-    return 'lime'; // 저장소를 못 쓰는 브라우저면 기본 시안
-  }
-}
-
-function applyTheme(id) {
-  document.documentElement.dataset.theme = id;
-  try {
-    localStorage.setItem(THEME_KEY, id);
-  } catch {
-    // 저장은 못 해도 화면은 바뀌어요
-  }
-  renderTheme();
-}
-
-function renderTheme() {
-  const current = document.documentElement.dataset.theme || 'lime';
-  const options = THEMES.map((theme) => {
-    const swatch = el('span', { class: 'theme-swatch' });
-    swatch.style.background = theme.swatch;
-    return el('button', { class: 'theme-option', type: 'button', 'aria-pressed': String(theme.id === current), onclick: () => applyTheme(theme.id) }, swatch, theme.label);
-  });
-  document.getElementById('theme-section').replaceChildren(card({
-    title: '디자인 시안',
-    extra: '팀 회의용',
-    children: [
-      el('div', { class: 'theme-options' }, options),
-      el('p', { class: 's-foot' }, '포인트 색을 바꿔 보며 정해요. 정하고 나면 이 칸은 지워요'),
-    ],
-  }));
-}
-
 // ── 시작 ─────────────────────────────────────────
 
 function renderLoadError(message) {
@@ -1378,6 +1335,4 @@ async function load() {
   loadSuggestions();
 }
 
-document.documentElement.dataset.theme = savedTheme();
-renderTheme();
 load();
