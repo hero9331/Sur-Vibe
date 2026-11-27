@@ -1,163 +1,5 @@
-/* 설정 화면 디자인 시안 — 담당: 1학년 A
-   settings.html에서만 불러와요. 다른 화면은 그대로예요.
-   참고: 토스·카카오페이·뱅크샐러드(연회색 바탕 + 둥근 흰 카드 + 큰 숫자), 노션(회색 단계, 군더더기 없는 목록)
-   팀이 정하면 이 토큰을 style.css로 옮겨서 모든 화면에 써요. */
+/* 설정 전용 부품 — 담당: 1학년 A */
 
-/* ── 토큰 ───────────────────────────────────── */
-:root {
-  /* 회색 단계: 글자 900 > 700 > 600, 선 200, 바탕 100 */
-  --g-50: #f9fafb;
-  --g-100: #f2f4f6;
-  --g-200: #e5e8eb;
-  --g-300: #d1d6db;
-  --g-400: #b0b8c1;
-  --g-500: #8b95a1;
-  --g-600: #6b7684;
-  --g-700: #4e5968;
-  --g-800: #333d4b;
-  --g-900: #191f28;
-
-  /* 포인트 색 (기본: 라임). 아래 [data-theme]이 바꿔요 */
-  --brand: #bae637; /* 버튼·막대 바탕 (라임-4) */
-  --brand-hover: #a0d911; /* 누를 때 (라임-5) */
-  --brand-ink: #254000; /* 포인트 바탕 위 글자 (라임-9, 대비 8:1) */
-  --brand-soft: #f4ffb8; /* 옅은 강조 바탕 (라임-1) */
-  --brand-text: #3f6600; /* 흰 바탕 위 포인트 글자·아이콘 (라임-8, 대비 6.7:1) */
-
-  --danger: #d92d3a;
-  --danger-soft: #fdecee;
-  --warning-text: #b25e09;
-  --warning-soft: #fff4e5;
-
-  /* style.css 토큰을 이 화면에서만 바꿔요 */
-  --color-bg: var(--g-100);
-  --color-card: #fff;
-  --color-text: var(--g-900);
-  --color-muted: var(--g-600);
-  --color-line: var(--g-200);
-  --color-primary: var(--brand-text);
-  --color-danger: var(--danger);
-  --bs-body-color: var(--g-900);
-  --bs-secondary-color: var(--g-600);
-  --bs-border-color: var(--g-200);
-  --bs-form-invalid-color: var(--danger);
-  --bs-form-invalid-border-color: var(--danger);
-}
-
-/* 회의용 시안: 페이지 맨 아래 "디자인 시안"에서 바꿔요 */
-:root[data-theme='green'] {
-  --brand: #1f5c46;
-  --brand-hover: #174735;
-  --brand-ink: #fff;
-  --brand-soft: #e7f3ec;
-  --brand-text: #1f5c46;
-}
-
-:root[data-theme='blue'] {
-  --brand: #1b64da;
-  --brand-hover: #1957c2;
-  --brand-ink: #fff;
-  --brand-soft: #e8f3ff;
-  --brand-text: #1b64da;
-}
-
-/* ── 페이지 ─────────────────────────────────── */
-.settings-page {
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-}
-
-.settings-page .page {
-  max-width: 600px;
-}
-
-.s-page-title {
-  margin: 20px 4px 18px;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-}
-
-.settings-page .placeholder {
-  border-radius: 6px;
-  background-color: var(--g-300);
-}
-
-/* 위 메뉴와 아래 탭 (layout.js가 만든 것을 이 화면에서만 다시 꾸며요) */
-.settings-page .app-navbar {
-  background: #fff;
-  border-bottom: 1px solid var(--g-200);
-}
-
-.settings-page .navbar-brand {
-  color: var(--g-900) !important;
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.settings-page .app-navbar .nav-link {
-  color: var(--g-600);
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.settings-page .app-navbar .nav-link.active {
-  color: var(--g-900);
-  font-weight: 700 !important;
-  box-shadow: none;
-}
-
-.settings-page .navbar-text {
-  color: var(--g-700);
-  font-size: 14px;
-}
-
-.settings-page #logout-btn {
-  padding: 6px 12px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--g-100);
-  color: var(--g-700);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.settings-page #logout-btn:hover {
-  background: var(--g-200);
-  color: var(--g-900);
-}
-
-.settings-page .bottom-tabs {
-  background: #fff;
-  border-top: 1px solid var(--g-200);
-}
-
-.settings-page .bottom-tab {
-  position: relative;
-  color: var(--g-600);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.settings-page .bottom-tab.active {
-  color: var(--g-900);
-  font-weight: 700;
-  box-shadow: none;
-}
-
-.settings-page .bottom-tab.active::before {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 28px;
-  height: 3px;
-  margin-left: -14px;
-  border-radius: 0 0 3px 3px;
-  background: var(--g-900);
-  content: '';
-}
-
-/* ── 아이콘 ─────────────────────────────────── */
 .icon {
   flex: none;
   width: 20px;
@@ -179,7 +21,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 0 4px 20px;
+  margin-bottom: 1rem;
 }
 
 .s-avatar {
@@ -189,8 +31,8 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: var(--brand);
-  color: var(--brand-ink);
+  background: var(--color-primary);
+  color: var(--color-card);
   font-size: 20px;
   font-weight: 700;
 }
@@ -203,24 +45,11 @@
 
 .s-profile-meta {
   margin-top: 2px;
-  color: var(--g-700);
+  color: var(--color-muted);
   font-size: 14px;
 }
 
 /* ── 카드 ───────────────────────────────────── */
-.s-card {
-  margin-bottom: 12px;
-  padding: 24px 20px;
-  border-radius: 20px;
-  background: #fff;
-}
-
-@media (min-width: 576px) {
-  .s-card {
-    padding: 28px;
-  }
-}
-
 .s-card-head {
   display: flex;
   align-items: center;
@@ -230,7 +59,7 @@
 
 .s-card-title {
   margin: 0;
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -238,14 +67,14 @@
 
 .s-card-extra {
   margin-left: auto;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
   font-weight: 500;
 }
 
 .s-card-desc {
   margin: 4px 0 0;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -255,9 +84,9 @@
   gap: 4px;
   margin-bottom: 10px;
   padding: 4px 8px;
-  border-radius: 8px;
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  border-radius: var(--radius);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 700;
 }
@@ -269,7 +98,7 @@
 
 .s-empty {
   margin: 4px 0 8px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 15px;
   line-height: 1.55;
 }
@@ -278,7 +107,7 @@
   display: flex;
   align-items: center;
   margin: 20px 0 4px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
   font-weight: 600;
 }
@@ -289,21 +118,21 @@
   gap: 8px;
   margin: 16px 0 0;
   padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--g-50);
-  color: var(--g-700);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-muted);
   font-size: 14px;
   line-height: 1.5;
 }
 
 .s-note .icon {
   margin-top: 2px;
-  color: var(--g-500);
+  color: var(--color-muted);
 }
 
 .s-note.is-warn {
-  background: var(--warning-soft);
-  color: var(--warning-text);
+  background: var(--bs-warning-bg-subtle);
+  color: var(--bs-warning-text-emphasis);
 }
 
 .s-note.is-warn .icon {
@@ -315,14 +144,15 @@
   align-items: center;
   gap: 6px;
   margin: 12px 0 0;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 13px;
 }
 
 /* ── 한 달 예산 ─────────────────────────────── */
 .s-budget-amount {
+  text-align: right;
   margin: 2px 0 18px;
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -335,37 +165,34 @@
 }
 
 .s-bar > span {
-  min-width: 4px;
-  border-radius: 999px;
+  border-radius: var(--radius);
 }
 
 .s-bar-fixed,
 .s-dot.is-fixed {
-  background: var(--g-400);
+  background: var(--color-muted);
 }
 
 .s-bar-free,
 .s-dot.is-free {
-  background: var(--brand);
+  background: var(--color-primary);
 }
 
 .s-legend {
-  display: grid;
-  gap: 10px;
-  margin-top: 18px;
+  margin-top: 1rem;
 }
 
 .s-legend-row {
-  display: flex;
+  justify-content: flex-start;
   align-items: center;
   gap: 8px;
-  color: var(--g-700);
+  color: var(--color-muted);
   font-size: 15px;
 }
 
 .s-legend-row strong {
   margin-left: auto;
-  color: var(--g-900);
+  color: var(--color-text);
   font-weight: 600;
 }
 
@@ -382,25 +209,23 @@
   list-style: none;
 }
 
-/* 카드가 목록으로 끝나면 줄 안쪽 여백만큼 아래를 줄여요 */
-.s-card > .s-list:last-child {
-  margin-bottom: -10px;
-}
-
 .s-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  width: calc(100% + 16px);
-  min-height: 64px;
-  margin: 0 -8px;
-  padding: 10px 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 0;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: none;
   color: inherit;
   font: inherit;
   text-align: left;
+}
+
+.s-list > li + li {
+  border-top: 1px dashed var(--color-line);
 }
 
 button.s-row {
@@ -408,15 +233,15 @@ button.s-row {
 }
 
 button.s-row:hover {
-  background: var(--g-50);
+  background: var(--color-bg);
 }
 
 button.s-row:active {
-  background: var(--g-100);
+  background: var(--color-bg);
 }
 
 button.s-row:focus-visible {
-  outline: 2px solid var(--brand-text);
+  outline: 2px solid var(--color-primary);
   outline-offset: -2px;
 }
 
@@ -434,26 +259,26 @@ button.s-row:focus-visible {
 }
 
 .s-row-title {
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 500;
 }
 
 .s-row-sub {
   margin-top: 2px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
 }
 
 .s-row-value {
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .s-row-muted {
-  color: var(--g-600);
+  color: var(--color-muted);
   font-weight: 500;
 }
 
@@ -461,11 +286,11 @@ button.s-row:focus-visible {
   width: 18px;
   height: 18px;
   margin-left: -4px;
-  color: var(--g-400);
+  color: var(--color-muted);
 }
 
 .s-row-add .s-row-title {
-  color: var(--brand-text);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -476,35 +301,35 @@ button.s-row:focus-visible {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--g-100);
-  color: var(--g-700);
+  background: var(--color-bg);
+  color: var(--color-muted);
   font-size: 15px;
   font-weight: 700;
 }
 
 .s-lead.is-brand {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
 }
 
 .s-lead.is-add {
-  background: var(--g-50);
-  color: var(--brand-text);
-  box-shadow: inset 0 0 0 1px var(--g-200);
+  background: var(--color-bg);
+  color: var(--color-primary);
+  border-color: var(--color-line);
 }
 
 .s-done {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .s-done .icon {
-  color: var(--brand-text);
+  color: var(--color-primary);
 }
 
 /* ── 버튼 ───────────────────────────────────── */
@@ -516,25 +341,25 @@ button.s-row:focus-visible {
   height: 34px;
   padding: 0 14px;
   border: 0;
-  border-radius: 10px;
-  background: var(--g-100);
-  color: var(--g-800);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .s-pill:hover {
-  background: var(--g-200);
+  background: var(--color-line);
 }
 
 .s-pill.is-brand {
-  background: var(--brand);
-  color: var(--brand-ink);
+  background: var(--color-primary);
+  color: var(--color-card);
 }
 
 .s-pill.is-brand:hover {
-  background: var(--brand-hover);
+  background: var(--color-primary-dark);
 }
 
 .s-pill:disabled {
@@ -545,7 +370,7 @@ button.s-row:focus-visible {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--brand-text);
+  color: var(--color-primary);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -555,78 +380,54 @@ button.s-row:focus-visible {
   text-decoration: underline;
 }
 
-.settings-page .btn-primary {
-  --bs-btn-color: var(--brand-ink);
-  --bs-btn-bg: var(--brand);
-  --bs-btn-border-color: var(--brand);
-  --bs-btn-hover-color: var(--brand-ink);
-  --bs-btn-hover-bg: var(--brand-hover);
-  --bs-btn-hover-border-color: var(--brand-hover);
-  --bs-btn-active-color: var(--brand-ink);
-  --bs-btn-active-bg: var(--brand-hover);
-  --bs-btn-active-border-color: var(--brand-hover);
-  --bs-btn-disabled-color: var(--brand-ink);
-  --bs-btn-disabled-bg: var(--brand);
-  --bs-btn-disabled-border-color: var(--brand);
-  --bs-btn-focus-shadow-rgb: 25, 31, 40;
-}
-
-.settings-page .btn-lg {
-  --bs-btn-padding-y: 15px;
-  --bs-btn-font-size: 17px;
-  --bs-btn-border-radius: 16px;
-  font-weight: 700;
-}
-
 /* disabled 값도 적어 둬요. 없으면 저장하는 동안(버튼이 잠긴 사이) 바탕이 투명해져요 */
 .s-btn-delete {
-  --bs-btn-color: var(--danger);
-  --bs-btn-bg: var(--g-100);
-  --bs-btn-border-color: var(--g-100);
-  --bs-btn-hover-color: var(--danger);
-  --bs-btn-hover-bg: var(--danger-soft);
-  --bs-btn-hover-border-color: var(--danger-soft);
-  --bs-btn-active-color: var(--danger);
-  --bs-btn-active-bg: var(--danger-soft);
-  --bs-btn-active-border-color: var(--danger-soft);
-  --bs-btn-disabled-color: var(--danger);
-  --bs-btn-disabled-bg: var(--g-100);
-  --bs-btn-disabled-border-color: var(--g-100);
+  --bs-btn-color: var(--color-danger);
+  --bs-btn-bg: var(--color-bg);
+  --bs-btn-border-color: var(--color-bg);
+  --bs-btn-hover-color: var(--color-danger);
+  --bs-btn-hover-bg: var(--bs-danger-bg-subtle);
+  --bs-btn-hover-border-color: var(--bs-danger-bg-subtle);
+  --bs-btn-active-color: var(--color-danger);
+  --bs-btn-active-bg: var(--bs-danger-bg-subtle);
+  --bs-btn-active-border-color: var(--bs-danger-bg-subtle);
+  --bs-btn-disabled-color: var(--color-danger);
+  --bs-btn-disabled-bg: var(--color-bg);
+  --bs-btn-disabled-border-color: var(--color-bg);
 }
 
 /* 한 번 더 누르면 지워지는 삭제 버튼, 탈퇴하기 버튼 */
 .s-btn-delete.armed,
 .s-btn-danger {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: var(--danger);
-  --bs-btn-border-color: var(--danger);
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: var(--danger);
-  --bs-btn-hover-border-color: var(--danger);
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: var(--danger);
-  --bs-btn-active-border-color: var(--danger);
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: var(--danger);
-  --bs-btn-disabled-border-color: var(--danger);
-  --bs-btn-focus-shadow-rgb: 217, 45, 58;
+  --bs-btn-color: var(--color-card);
+  --bs-btn-bg: var(--color-danger);
+  --bs-btn-border-color: var(--color-danger);
+  --bs-btn-hover-color: var(--color-card);
+  --bs-btn-hover-bg: var(--color-danger);
+  --bs-btn-hover-border-color: var(--color-danger);
+  --bs-btn-active-color: var(--color-card);
+  --bs-btn-active-bg: var(--color-danger);
+  --bs-btn-active-border-color: var(--color-danger);
+  --bs-btn-disabled-color: var(--color-card);
+  --bs-btn-disabled-bg: var(--color-danger);
+  --bs-btn-disabled-border-color: var(--color-danger);
 }
 
 /* 취소처럼 조용한 버튼 */
 .s-btn-quiet {
   --bs-btn-padding-x: 24px;
-  --bs-btn-color: var(--g-800);
-  --bs-btn-bg: var(--g-100);
-  --bs-btn-border-color: var(--g-100);
-  --bs-btn-hover-color: var(--g-900);
-  --bs-btn-hover-bg: var(--g-200);
-  --bs-btn-hover-border-color: var(--g-200);
-  --bs-btn-active-color: var(--g-900);
-  --bs-btn-active-bg: var(--g-200);
-  --bs-btn-active-border-color: var(--g-200);
-  --bs-btn-disabled-color: var(--g-800);
-  --bs-btn-disabled-bg: var(--g-100);
-  --bs-btn-disabled-border-color: var(--g-100);
+  --bs-btn-color: var(--color-text);
+  --bs-btn-bg: var(--color-bg);
+  --bs-btn-border-color: var(--color-bg);
+  --bs-btn-hover-color: var(--color-text);
+  --bs-btn-hover-bg: var(--color-line);
+  --bs-btn-hover-border-color: var(--color-line);
+  --bs-btn-active-color: var(--color-text);
+  --bs-btn-active-bg: var(--color-line);
+  --bs-btn-active-border-color: var(--color-line);
+  --bs-btn-disabled-color: var(--color-text);
+  --bs-btn-disabled-bg: var(--color-bg);
+  --bs-btn-disabled-border-color: var(--color-bg);
 }
 
 /* ── 아래에서 올라오는 시트 ───────────────────── */
@@ -639,9 +440,9 @@ button.s-row:focus-visible {
 }
 
 .sheet .modal-content {
-  border: 0;
-  border-radius: 24px;
-  background: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-card);
 }
 
 .sheet-handle {
@@ -681,7 +482,7 @@ button.s-row:focus-visible {
 
 .sheet .form-label {
   margin-bottom: 8px;
-  color: var(--g-700);
+  color: var(--color-muted);
   font-size: 14px;
   font-weight: 600;
 }
@@ -689,44 +490,42 @@ button.s-row:focus-visible {
 .sheet .form-control {
   height: 54px;
   padding: 0 16px;
-  border: 2px solid transparent;
-  border-radius: 14px;
-  background: var(--g-100);
-  color: var(--g-900);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  color: var(--color-text);
   font-size: 17px;
   font-weight: 500;
 }
 
 .sheet .form-control::placeholder {
-  color: var(--g-500);
+  color: var(--color-muted);
 }
 
 .sheet .form-control:focus {
-  border-color: var(--brand-text);
-  background: #fff;
-  box-shadow: none;
+  border-color: var(--color-primary);
+  background: var(--color-card);
 }
 
 .sheet .form-control.is-invalid {
   padding-right: 16px;
-  border-color: var(--danger);
+  border-color: var(--color-danger);
   background-image: none;
 }
 
 .sheet .form-control.is-invalid:focus {
-  box-shadow: none;
 }
 
 .sheet .invalid-feedback {
   margin-top: 6px;
-  color: var(--danger);
+  color: var(--color-danger);
   font-size: 13px;
   font-weight: 500;
 }
 
 .sheet .form-text {
   margin-top: 8px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -734,17 +533,17 @@ button.s-row:focus-visible {
 .sheet-hint {
   min-height: 1.5em;
   margin: 12px 0 0;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
 }
 
 .sheet-hint.is-over {
-  color: var(--warning-text);
+  color: var(--bs-warning-text-emphasis);
 }
 
 .sheet-error {
   margin: 12px 0 0;
-  color: var(--danger);
+  color: var(--color-danger);
   font-size: 14px;
   font-weight: 500;
 }
@@ -759,17 +558,17 @@ button.s-row:focus-visible {
   align-items: baseline;
   gap: 4px;
   padding: 4px 0 10px;
-  border-bottom: 2px solid var(--g-200);
+  border-bottom: 2px solid var(--color-line);
   cursor: text;
   transition: border-color 0.15s;
 }
 
 .amount-field:focus-within {
-  border-bottom-color: var(--brand-text);
+  border-bottom-color: var(--color-primary);
 }
 
 .amount-field.is-invalid {
-  border-bottom-color: var(--danger);
+  border-bottom-color: var(--color-danger);
 }
 
 .amount-sizer {
@@ -800,15 +599,15 @@ button.s-row:focus-visible {
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--g-900);
+  color: var(--color-text);
 }
 
 .amount-input::placeholder {
-  color: var(--g-300);
+  color: var(--color-line);
 }
 
 .amount-unit {
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 24px;
   font-weight: 700;
 }
@@ -823,21 +622,21 @@ button.s-row:focus-visible {
 .chip {
   height: 36px;
   padding: 0 14px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--g-100);
-  color: var(--g-800);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
 }
 
 .chip:hover {
-  background: var(--g-200);
+  background: var(--color-line);
 }
 
 .chip.is-brand {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
 }
 
 .segmented {
@@ -845,32 +644,31 @@ button.s-row:focus-visible {
   gap: 4px;
   margin-bottom: 20px;
   padding: 4px;
-  border-radius: 14px;
-  background: var(--g-100);
+  border-radius: var(--radius);
+  background: var(--color-bg);
 }
 
 .segmented .btn {
   flex: 1;
   padding: 10px;
   border: 0;
-  border-radius: 10px;
-  color: var(--g-600);
+  border-radius: var(--radius);
+  color: var(--color-muted);
   font-size: 15px;
   font-weight: 600;
 }
 
 .segmented .btn:hover {
-  color: var(--g-900);
+  color: var(--color-text);
 }
 
 .segmented .btn-check:checked + .btn {
-  background: #fff;
-  color: var(--g-900);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--color-card);
+  color: var(--color-text);
 }
 
 .segmented .btn-check:focus-visible + .btn {
-  outline: 2px solid var(--brand-text);
+  outline: 2px solid var(--color-primary);
 }
 
 /* 폰에서는 시트가 아래에서 올라와요 (엄지가 닿는 곳) */
@@ -888,7 +686,7 @@ button.s-row:focus-visible {
   .sheet .modal-content {
     max-height: 92vh;
     padding-bottom: env(safe-area-inset-bottom);
-    border-radius: 24px 24px 0 0;
+    border-radius: var(--radius);
   }
 
   .sheet-handle {
@@ -896,8 +694,8 @@ button.s-row:focus-visible {
     width: 40px;
     height: 4px;
     margin: 10px auto 0;
-    border-radius: 999px;
-    background: var(--g-300);
+    border-radius: var(--radius);
+    background: var(--color-line);
   }
 
   .sheet .modal-header {
@@ -922,9 +720,9 @@ button.s-row:focus-visible {
   z-index: 1090;
   max-width: calc(100% - 32px);
   padding: 14px 20px;
-  border-radius: 16px;
-  background: rgba(25, 31, 40, 0.94);
-  color: #fff;
+  border-radius: var(--radius);
+  background: var(--color-text);
+  color: var(--color-card);
   font-size: 15px;
   font-weight: 500;
   opacity: 0;
@@ -941,9 +739,9 @@ button.s-row:focus-visible {
 /* "되돌리기" 버튼이 있는 알림. 보일 때만 누를 수 있어요 */
 .set-toast.has-action {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-  white-space: nowrap;
+  gap: 8px 16px;
 }
 
 .set-toast.show.has-action {
@@ -955,7 +753,7 @@ button.s-row:focus-visible {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--brand-soft);
+  color: var(--bs-success-bg-subtle);
   font-size: 15px;
   font-weight: 700;
 }
@@ -966,44 +764,10 @@ button.s-row:focus-visible {
   }
 }
 
-/* ── 디자인 시안 (팀 회의용, 정하면 지워요) ────── */
-.theme-options {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.theme-option {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 46px;
-  border: 2px solid transparent;
-  border-radius: 14px;
-  background: var(--g-100);
-  color: var(--g-800);
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.theme-option[aria-pressed='true'] {
-  border-color: var(--g-900);
-  background: #fff;
-  color: var(--g-900);
-}
-
-.theme-swatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-}
-
 /* ── 고정비: 한 톤 아이콘, 카테고리 묶음, 결제 임박 ─── */
 .s-lead.is-icon {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
 }
 
 .s-added {
@@ -1011,7 +775,7 @@ button.s-row:focus-visible {
   align-items: center;
   gap: 2px;
   margin-right: 6px;
-  color: var(--brand-text);
+  color: var(--color-primary);
   font-weight: 600;
   vertical-align: -2px;
 }
@@ -1020,7 +784,7 @@ button.s-row:focus-visible {
   display: flex;
   justify-content: space-between;
   margin: 18px 0 2px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 13px;
   font-weight: 600;
 }
@@ -1033,9 +797,9 @@ button.s-row:focus-visible {
   display: inline-flex;
   margin-left: 6px;
   padding: 1px 6px;
-  border-radius: 6px;
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  border-radius: var(--radius);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 700;
   vertical-align: 1px;
@@ -1045,7 +809,7 @@ button.s-row:focus-visible {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--g-800);
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 600;
 }
@@ -1057,8 +821,9 @@ button.s-row:focus-visible {
 
 /* ── 고정지출 예상 ─────────────────────────────── */
 .s-forecast-total {
+  text-align: right;
   margin: 6px 0 2px;
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -1066,13 +831,13 @@ button.s-row:focus-visible {
 
 .s-row-amount {
   margin-left: 8px;
-  color: var(--g-900);
+  color: var(--color-text);
   font-weight: 700;
 }
 
 .s-cta {
   --bs-btn-padding-y: 12px;
-  --bs-btn-border-radius: 14px;
+  --bs-btn-border-radius: var(--radius);
   font-weight: 700;
 }
 
@@ -1099,8 +864,8 @@ button.s-row:focus-visible {
   position: relative;
   width: 50px;
   height: 30px;
-  border-radius: 999px;
-  background: var(--g-300);
+  border-radius: var(--radius);
+  background: var(--color-line);
   transition: background-color 0.2s;
 }
 
@@ -1111,14 +876,13 @@ button.s-row:focus-visible {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  background: var(--color-card);
   transition: transform 0.2s;
   content: '';
 }
 
 .s-switch-input:checked + .s-switch-track {
-  background: var(--brand);
+  background: var(--color-primary);
 }
 
 .s-switch-input:checked + .s-switch-track::after {
@@ -1126,7 +890,7 @@ button.s-row:focus-visible {
 }
 
 .s-switch-input:focus-visible + .s-switch-track {
-  outline: 2px solid var(--brand-text);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -1135,8 +899,8 @@ button.s-row:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 14px;
-  background: var(--g-50);
+  border-radius: var(--radius);
+  background: var(--color-bg);
 }
 
 .s-switch-row > div:first-child {
@@ -1144,30 +908,30 @@ button.s-row:focus-visible {
 }
 
 .s-switch-title {
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 16px;
   font-weight: 600;
 }
 
 .s-switch-sub {
   margin-top: 2px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 13px;
 }
 
 .s-push {
   margin-top: 12px;
   padding: 14px 16px;
-  border-radius: 18px;
-  background: var(--g-50);
-  box-shadow: inset 0 0 0 1px var(--g-200);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
 }
 
 .s-push-head {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 12px;
   font-weight: 600;
 }
@@ -1177,9 +941,9 @@ button.s-row:focus-visible {
   place-items: center;
   width: 18px;
   height: 18px;
-  border-radius: 5px;
-  background: var(--brand);
-  color: var(--brand-ink);
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-card);
   font-size: 10px;
   font-weight: 800;
 }
@@ -1190,14 +954,14 @@ button.s-row:focus-visible {
 
 .s-push-title {
   margin-top: 8px;
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 700;
 }
 
 .s-push-body {
   margin-top: 2px;
-  color: var(--g-700);
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -1210,10 +974,10 @@ button.s-row:focus-visible {
 .s-push-actions span {
   flex: 1;
   padding: 8px 0;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: inset 0 0 0 1px var(--g-200);
-  color: var(--g-800);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  color: var(--color-text);
   font-size: 13px;
   font-weight: 600;
   text-align: center;
@@ -1222,8 +986,8 @@ button.s-row:focus-visible {
 /* ── 계좌·카드: 은행 이름 첫 글자 동그라미, 잔액, 숨긴 계좌 ───── */
 /* 은행 로고(회사 상표) 대신 테마 색 동그라미 안에 이름 첫 글자 */
 .s-bank {
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
   font-size: 17px;
   font-weight: 800;
 }
@@ -1236,8 +1000,8 @@ button.s-row:focus-visible {
   height: 20px;
   margin-left: -4px;
   border-radius: 50%;
-  background: var(--brand-soft);
-  color: var(--brand-text);
+  background: var(--bs-success-bg-subtle);
+  color: var(--color-primary);
   font-size: 11px;
   font-weight: 800;
 }
@@ -1253,8 +1017,8 @@ button.s-row:focus-visible {
   gap: 10px;
   margin-top: 10px;
   padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--brand-soft);
+  border-radius: var(--radius);
+  background: var(--bs-success-bg-subtle);
   animation: s-privacy-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -1265,13 +1029,13 @@ button.s-row:focus-visible {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: #fff;
-  color: var(--brand-text);
+  background: var(--color-card);
+  color: var(--color-primary);
 }
 
 .s-privacy-text strong {
   display: block;
-  color: var(--brand-text);
+  color: var(--color-primary);
   font-size: 14px;
   font-weight: 700;
 }
@@ -1279,7 +1043,7 @@ button.s-row:focus-visible {
 .s-privacy-text span {
   display: block;
   margin-top: 1px;
-  color: var(--g-700);
+  color: var(--color-muted);
   font-size: 13px;
 }
 
@@ -1306,7 +1070,7 @@ button.s-row:focus-visible {
 }
 
 .s-asset-amount {
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -1314,7 +1078,7 @@ button.s-row:focus-visible {
 
 .s-asset-change {
   margin-top: 2px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
 }
 
@@ -1331,11 +1095,11 @@ button.s-row:focus-visible {
 }
 
 .s-change.is-up {
-  color: var(--brand-text);
+  color: var(--color-primary);
 }
 
 .s-change.is-down {
-  color: var(--g-600);
+  color: var(--color-muted);
 }
 
 .s-hidden-toggle {
@@ -1346,7 +1110,7 @@ button.s-row:focus-visible {
   padding: 8px 0;
   border: 0;
   background: none;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1374,15 +1138,15 @@ button.s-row:focus-visible {
 }
 
 .chip.is-selected {
-  background: var(--brand-soft);
-  box-shadow: inset 0 0 0 1.5px var(--brand-text);
-  color: var(--brand-text);
+  background: var(--bs-success-bg-subtle);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .chip.is-add {
-  background: #fff;
-  box-shadow: inset 0 0 0 1px var(--g-300);
-  color: var(--g-700);
+  background: var(--color-card);
+  border-color: var(--color-line);
+  color: var(--color-muted);
 }
 
 .chip-dot {
@@ -1398,9 +1162,9 @@ button.s-row:focus-visible {
   gap: 4px;
   height: 36px;
   padding: 0 4px 0 14px;
-  border-radius: 999px;
-  background: #fff;
-  box-shadow: inset 0 0 0 1.5px var(--brand-text);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  border: 1px solid var(--color-primary);
 }
 
 .chip-input-field {
@@ -1408,7 +1172,7 @@ button.s-row:focus-visible {
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -1417,25 +1181,25 @@ button.s-row:focus-visible {
   height: 28px;
   padding: 0 12px;
   border: 0;
-  border-radius: 999px;
-  background: var(--brand);
-  color: var(--brand-ink);
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-card);
   font-size: 13px;
   font-weight: 700;
 }
 
 .chip-row.is-invalid .chip:not(.is-add) {
-  box-shadow: inset 0 0 0 1px var(--danger);
+  border-color: var(--color-danger);
 }
 
 /* ── 계정: 탈퇴 ─────────────────────────────── */
 .s-row-quiet {
-  color: var(--g-600);
+  color: var(--color-muted);
 }
 
 .s-leave-lead {
   margin: 0 0 16px;
-  color: var(--g-700);
+  color: var(--color-muted);
   font-size: 15px;
   line-height: 1.55;
 }
@@ -1444,8 +1208,8 @@ button.s-row:focus-visible {
 .s-leave-list {
   margin: 0;
   padding: 4px 16px;
-  border-radius: 16px;
-  background: var(--g-50);
+  border-radius: var(--radius);
+  background: var(--color-bg);
   list-style: none;
 }
 
@@ -1458,7 +1222,7 @@ button.s-row:focus-visible {
 }
 
 .s-leave-item + .s-leave-item {
-  border-top: 1px solid var(--g-200);
+  border-top: 1px solid var(--color-line);
 }
 
 .s-leave-item .s-lead {
@@ -1472,8 +1236,8 @@ button.s-row:focus-visible {
 }
 
 .s-lead.is-done {
-  background: var(--brand);
-  color: var(--brand-ink);
+  background: var(--color-primary);
+  color: var(--color-card);
 }
 
 .s-leave-main {
@@ -1483,7 +1247,7 @@ button.s-row:focus-visible {
 
 .s-leave-title {
   display: block;
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 600;
 }
@@ -1491,12 +1255,12 @@ button.s-row:focus-visible {
 .s-leave-sub {
   display: block;
   margin-top: 1px;
-  color: var(--g-600);
+  color: var(--color-muted);
   font-size: 13px;
 }
 
 .s-leave-value {
-  color: var(--g-900);
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 700;
   white-space: nowrap;
@@ -1509,7 +1273,7 @@ button.s-row:focus-visible {
   align-items: center;
   gap: 12px;
   margin: 20px 0;
-  color: var(--g-800);
+  color: var(--color-text);
   font-size: 15px;
   font-weight: 600;
   line-height: 1.45;
@@ -1531,11 +1295,11 @@ button.s-row:focus-visible {
   place-items: center;
   width: 24px;
   height: 24px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: inset 0 0 0 2px var(--g-300);
+  border-radius: var(--radius);
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
   color: transparent;
-  transition: background-color 0.15s, box-shadow 0.15s;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
 .s-check-box .icon {
@@ -1545,16 +1309,15 @@ button.s-row:focus-visible {
 }
 
 .s-check-input:checked + .s-check-box {
-  background: var(--brand);
-  box-shadow: none;
-  color: var(--brand-ink);
+  background: var(--color-primary);
+  color: var(--color-card);
 }
 
 .s-check-input:focus-visible + .s-check-box {
-  outline: 2px solid var(--brand-text);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 .s-check.is-invalid .s-check-box {
-  box-shadow: inset 0 0 0 2px var(--danger);
+  border-color: var(--color-danger);
 }
