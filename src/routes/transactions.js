@@ -9,6 +9,9 @@ const { HttpError } = require('../utils/httpError');
 const router = express.Router();
 const editable = ['date', 'merchant', 'amount', 'category', 'isExpense'];
 const batchFields = [...editable, 'originalAmount', 'splitCount', 'accountId', 'source'];
+const contactEmail = /[^\s@]+@[^\s@.]+\.[^\s@]+/u;
+const mobileNumber = /(?<!\d)(?:\+82[ -]?1|01)[016789][ -]?\d{3,4}[ -]?\d{4}(?!\d)/u;
+const longNumber = /(?<!\d)\d(?:[ .-]?\d){11}/u;
 
 function fields(input, allowed) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
@@ -24,7 +27,7 @@ function validDate(date) {
 
 const validators = {
   date: validDate,
-  merchant: (value) => typeof value === 'string',
+  merchant: (value) => typeof value === 'string' && value.trim().length <= 100,
   amount: (value) => Number.isFinite(value) && value > 0,
   originalAmount: (value) => Number.isFinite(value) && value >= 0,
   category: (value) => CATEGORY_NAMES.includes(value),
@@ -37,6 +40,14 @@ const validators = {
 function validate(values) {
   for (const [key, value] of Object.entries(values)) {
     if (!validators[key](value)) throw new HttpError(400, '거래 정보를 확인해 주세요');
+  }
+  if (Object.hasOwn(values, 'merchant')) validateMerchantPrivacy(values.merchant);
+}
+
+function validateMerchantPrivacy(merchant) {
+  const text = merchant.trim().normalize('NFKC');
+  if (contactEmail.test(text) || mobileNumber.test(text) || longNumber.test(text)) {
+    throw new HttpError(400, '가게 이름에 이메일이나 번호가 들어 있어요. 개인정보를 지우고 가게 이름만 적어 주세요.');
   }
 }
 
